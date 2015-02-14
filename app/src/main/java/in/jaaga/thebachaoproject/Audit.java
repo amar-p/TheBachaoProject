@@ -3,22 +3,17 @@ package in.jaaga.thebachaoproject;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Audit.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link Audit#newInstance} factory method to
- * create an instance of this fragment.
+/***A Dialog Fragment to show to the user when long pressed on mapView
+ * Take the inputs in this dialog fragment and pass it to the MainActivity
+ * for further processing.
  */
+
 public class Audit extends DialogFragment {
     float mLat;
     float mLng;
