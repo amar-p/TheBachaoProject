@@ -157,6 +157,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     void setAudit(){
+
         //TODO marker details will be from user data of audit...
 
         Marker m=new Marker(mapView,"sbc","India",new LatLng(lat,lng));
