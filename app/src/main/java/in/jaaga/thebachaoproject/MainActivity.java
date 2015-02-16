@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -25,6 +26,9 @@ import com.mapbox.mapboxsdk.tileprovider.tilesource.MapboxTileLayer;
 import com.mapbox.mapboxsdk.views.MapController;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.mapbox.mapboxsdk.views.MapViewListener;
+import com.parse.Parse;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener{
@@ -33,6 +37,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     private MapView mapView;
+    private ProgressBar progressBar;
     private Button getMyLocation;
     double lat,lng;
 
@@ -42,6 +47,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mapView = (MapView) findViewById(R.id.mapview);
+        progressBar= (ProgressBar) findViewById(R.id.progressBar);
         getMyLocation= (Button) findViewById(R.id.btn_location);
         getMyLocation.setOnClickListener(this);
         mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
@@ -49,8 +55,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
         mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
         mapView.setCenter(mapView.getTileProvider().getCenterCoordinate());
-        mapView.setZoom(0);
+       // mapView.setZoom(0);
         mapView.setSaveEnabled(true);
+        Parse.enableLocalDatastore(this);
+        Parse.initialize(this, "7qXoZPaj5Xv29czial8ZRZ1aIerUOVqrPxcDHMpN", "MimNVJQiVr5XxrDBRIenwTM7v2LenEVVOXeGnpFA");
+
 
         mapView.setMapViewListener(new MapViewListener() {
             @Override
@@ -156,9 +165,33 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    void setAudit(){
+    void setAudit(String name,String email,String feeling,int transport,int street_lights,int rating,double lat,double lng){
 
         //TODO marker details will be from user data of audit...
+
+
+        Toast.makeText(this,name+email+feeling,Toast.LENGTH_SHORT).show();
+
+        ParseObject audit=new ParseObject("audit");
+        audit.put("name",name);
+        audit.put("email",email);
+        audit.put("feeling",feeling);
+        audit.put("transport",transport);
+        audit.put("streetLights",street_lights);
+        audit.put("rating",rating);
+        audit.put("location",new ParseGeoPoint(lat,lng));
+        boolean response;
+        do{
+            progressBar.setVisibility(View.VISIBLE);
+            response=audit.saveInBackground().isCompleted();
+
+        }
+        while(!response);
+        if(response){
+            progressBar.setVisibility(View.INVISIBLE);
+
+        }
+
 
         Marker m=new Marker(mapView,"sbc","India",new LatLng(lat,lng));
         m.setIcon(new Icon(getApplicationContext(),Icon.Size.SMALL, "marker-stroked", "ee8a65"));
