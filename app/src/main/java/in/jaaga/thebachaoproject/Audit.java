@@ -122,9 +122,18 @@ public class Audit extends DialogFragment {
                         check_street_light=0;
                     }
 
-                    // When button is clicked, call up to owning activity.
-                    ((MainActivity)getActivity()).setAudit(mname,memail,mfeeling,check_transport,check_street_light,getRating(),mLat,mLng);
-                    getDialog().dismiss();
+                    if(mname.isEmpty() || memail.isEmpty() || mfeeling.isEmpty()){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Oops!").setMessage("your text is missing")
+                                .setPositiveButton(android.R.string.ok, null);
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }else {
+                        // When button is clicked, call up to owning activity.
+                        ((MainActivity) getActivity()).setAudit(mname, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
+                        getDialog().dismiss();
+                    }
                 }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Invalid email address")
