@@ -3,27 +3,24 @@ package in.jaaga.thebachaoproject;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.api.ILatLng;
+import com.mapbox.mapboxsdk.geometry.BoundingBox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.Icon;
 import com.mapbox.mapboxsdk.overlay.Marker;
-import com.mapbox.mapboxsdk.tileprovider.tilesource.ITileLayer;
-import com.mapbox.mapboxsdk.tileprovider.tilesource.MapboxTileLayer;
-import com.mapbox.mapboxsdk.views.MapController;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.mapbox.mapboxsdk.views.MapViewListener;
 import com.parse.Parse;
@@ -46,15 +43,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ILatLng iLatLng=new LatLng(21,77);
+        LatLng neLatLng=new LatLng(37,97);
+        LatLng swLattLng=new LatLng(12,67);
+        BoundingBox boundingBox = new BoundingBox(neLatLng,swLattLng);
+
+
         mapView = (MapView) findViewById(R.id.mapview);
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
         getMyLocation= (Button) findViewById(R.id.btn_location);
         getMyLocation.setOnClickListener(this);
         mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
-        mapView.zoomToBoundingBox(mapView.getTileProvider().getBoundingBox());
-        mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
-        mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
-        mapView.setCenter(mapView.getTileProvider().getCenterCoordinate());
+        mapView.zoomToBoundingBox(boundingBox);
+       //// mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
+       // mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
+        mapView.setCenter(iLatLng);
        // mapView.setZoom(0);
         mapView.setSaveEnabled(true);
         Parse.enableLocalDatastore(this);

@@ -1,6 +1,7 @@
 package in.jaaga.thebachaoproject;
 
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -11,6 +12,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***A Dialog Fragment to show to the user when long pressed on mapView
  * Take the inputs in this dialog fragment and pass it to the MainActivity
@@ -25,6 +29,7 @@ public class Audit extends DialogFragment {
     float rating;
     String mname,memail,mfeeling;
     int check_transport,check_street_light;
+
 
 
     static Audit newInstance(double lat,double lng) {
@@ -52,6 +57,7 @@ public class Audit extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v = inflater.inflate(R.layout.fragment_audit, container, false);
         final TextView tvRating = (TextView) v.findViewById(R.id.txt_rating);
         TextView tvLat = (TextView) v.findViewById(R.id.txt_lat);
@@ -101,23 +107,33 @@ public class Audit extends DialogFragment {
 
                 mname=name.getText().toString().trim();
                 memail=email.getText().toString().trim();
-                mfeeling=feeling.getText().toString().trim();
-                if(transport_available.isChecked()){
-                check_transport=1;
-                }
-                else{
-                    check_transport=0;
-                }
-                if(street_lights__available.isChecked()){
-                    check_street_light=1;
-                }
-                else{
-                    check_street_light=0;
+                if(isEmailValid(memail)){
+                    mfeeling=feeling.getText().toString().trim();
+                    if(transport_available.isChecked()){
+                        check_transport=1;
+                    }
+                    else{
+                        check_transport=0;
+                    }
+                    if(street_lights__available.isChecked()){
+                        check_street_light=1;
+                    }
+                    else{
+                        check_street_light=0;
+                    }
+
+                    // When button is clicked, call up to owning activity.
+                    ((MainActivity)getActivity()).setAudit(mname,memail,mfeeling,check_transport,check_street_light,getRating(),mLat,mLng);
+                    getDialog().dismiss();
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Invalid email address")
+                            .setTitle("Warning")
+                            .setPositiveButton(android.R.string.ok,null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
 
-                // When button is clicked, call up to owning activity.
-                ((MainActivity)getActivity()).setAudit(mname,memail,mfeeling,check_transport,check_street_light,getRating(),mLat,mLng);
-                getDialog().dismiss();
             }
         });
         getDialog().setTitle(getString(R.string.dialog_audit_title));
@@ -134,6 +150,22 @@ public class Audit extends DialogFragment {
     }
 
 
+    public static boolean isEmailValid(String memail) {
+        boolean isValid = false;
+
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        CharSequence inputStr = memail;
+
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+        if (matcher.matches()) {
+            isValid = true;
+        }else{
+            isValid = false;
+        }
+
+        return isValid;
+    }
 
 
 }
