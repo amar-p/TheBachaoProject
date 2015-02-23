@@ -29,8 +29,8 @@ dependencies {
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.0@aar') {
         transitive = true
     }
+    compile files('libs/Parse-1.8.1.jar')
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v4:21.0.3'
-    compile files('libs/Parse-1.8.1.jar')
     compile 'com.parse.bolts:bolts-android:1.+'
 }

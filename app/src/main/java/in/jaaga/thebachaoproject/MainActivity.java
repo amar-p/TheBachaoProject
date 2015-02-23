@@ -1,10 +1,13 @@
 package in.jaaga.thebachaoproject;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.api.ILatLng;
@@ -30,7 +32,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener{
+public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener{
 
 
 
@@ -53,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         mapView = (MapView) findViewById(R.id.mapview);
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
-        getMyLocation= (Button) findViewById(R.id.btn_location);
+        getMyLocation= (Button) findViewById(R.id.btn_menu);
         getMyLocation.setOnClickListener(this);
 
         mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
@@ -64,6 +66,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
         mapView.setZoom(0);
         mapView.setSaveEnabled(true);
+
+        goToUserLocation();
 
         if(getConnectivityStatus(getApplicationContext())==0){
             Toast.makeText(getApplicationContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
@@ -159,20 +163,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void onClick(View v) {
         switch(v.getId()){
 
-            case R.id.btn_location:
+            case R.id.btn_menu:
 
-            System.out.println("Location called");
 
-            mapView.setUserLocationEnabled(true);
+             //MenuFragment menuFragment=new MenuFragment();
+            Fragment menuFragment=MenuFragment.newInstance(getWindowManager().getDefaultDisplay().getWidth());
 
-            if(checkLocationService()) {
-                mapView.goToUserLocation(true);
-            }
-                else{
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                this.startActivity(myIntent);
-            }
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                Fragment prev = getSupportFragmentManager().findFragmentByTag("menu");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
 
+            ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container, menuFragment).commit();
             break;
         }
     }
@@ -246,7 +249,46 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    @Override
+    public void goToUserLocation(){
+
+        System.out.println("Location called");
+
+        mapView.setUserLocationEnabled(true);
+
+        if(checkLocationService()) {
+            mapView.goToUserLocation(true);
+        }
+        else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You need to turn on the Location Services")
+                    .setTitle("Turn on Location Service")
+                    .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(myIntent);
+                        }
+                    }).setNegativeButton(android.R.string.cancel,new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }
+
+        getSupportFragmentManager().popBackStack();
+
+    }
 
 
- }
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+}
 
