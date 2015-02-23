@@ -3,17 +3,20 @@ package in.jaaga.thebachaoproject;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
-import android.os.Bundle;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.Settings;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.api.ILatLng;
@@ -23,7 +26,6 @@ import com.mapbox.mapboxsdk.overlay.Icon;
 import com.mapbox.mapboxsdk.overlay.Marker;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.mapbox.mapboxsdk.views.MapViewListener;
-import com.parse.Parse;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
@@ -43,26 +45,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ILatLng iLatLng=new LatLng(21,77);
-        LatLng neLatLng=new LatLng(37,97);
-        LatLng swLattLng=new LatLng(12,67);
-        BoundingBox boundingBox = new BoundingBox(neLatLng,swLattLng);
 
+        ILatLng iLatLng=new LatLng(23,77);
+        LatLng neLatLng=new LatLng(35,92);
+        LatLng swLattLng=new LatLng(8,66);
+        BoundingBox boundingBox = new BoundingBox(neLatLng,swLattLng);
 
         mapView = (MapView) findViewById(R.id.mapview);
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
         getMyLocation= (Button) findViewById(R.id.btn_location);
         getMyLocation.setOnClickListener(this);
+
         mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
         mapView.zoomToBoundingBox(boundingBox);
-       //// mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
-       // mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
+        mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
+        mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
         mapView.setCenter(iLatLng);
-       // mapView.setZoom(0);
+        mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
+        mapView.setZoom(0);
         mapView.setSaveEnabled(true);
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "7qXoZPaj5Xv29czial8ZRZ1aIerUOVqrPxcDHMpN", "MimNVJQiVr5XxrDBRIenwTM7v2LenEVVOXeGnpFA");
 
+        if(getConnectivityStatus(getApplicationContext())==0){
+            Toast.makeText(getApplicationContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
+        }
 
         mapView.setMapViewListener(new MapViewListener() {
             @Override
@@ -88,10 +93,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onTapMap(MapView mapView, ILatLng iLatLng) {
 
+                if(getConnectivityStatus(getApplicationContext())==0){
+                    Toast.makeText(getApplicationContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
+                }
+
                 lat=iLatLng.getLatitude();
                 lng=iLatLng.getLongitude();
 
-                Toast.makeText(getApplicationContext(),lat+" "+lng,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),lat+" "+lng,Toast.LENGTH_SHORT).show();
 
             }
 
@@ -173,7 +182,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //TODO marker details will be from user data of audit...
 
 
-        Toast.makeText(this,name+email+feeling,Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this,name+email+feeling,Toast.LENGTH_SHORT).show();
 
         ParseObject audit=new ParseObject("audit");
         audit.put("name",name);
@@ -187,16 +196,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         do{
             progressBar.setVisibility(View.VISIBLE);
             response=audit.saveInBackground().isCompleted();
+            System.out.println(response);
+            if(response){
+                progressBar.setVisibility(View.INVISIBLE);
+
+            }
 
         }
-        while(!response);
-        if(response){
-            progressBar.setVisibility(View.INVISIBLE);
-
-        }
+        while(response==false);
 
 
-        Marker m=new Marker(mapView,"sbc","India",new LatLng(lat,lng));
+
+        Marker m=new Marker(mapView,feeling,"-"+name,new LatLng(lat,lng));
         m.setIcon(new Icon(getApplicationContext(),Icon.Size.SMALL, "marker-stroked", "ee8a65"));
         m.addTo(mapView);
         mapView.addMarker(m);
@@ -213,6 +224,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         return gps_enabled;
     }
+
+    public static int TYPE_WIFI = 1;
+    public static int TYPE_MOBILE = 2;
+    public static int TYPE_NOT_CONNECTED = 0;
+
+
+    public static int getConnectivityStatus(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (null != activeNetwork) {
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                return TYPE_WIFI;
+
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                return TYPE_MOBILE;
+        }
+        return TYPE_NOT_CONNECTED;
+    }
+
+
+
 
  }
 

@@ -10,9 +10,11 @@
     <string name="hint_name">"Enter Your Name"</string>
     <string name="hint_email">"Enter Your Email"</string>
     <string name="btn_txt_submit">"Submit"</string>
-    <string name="edit_txt_feeling">"How you're Feeling !"</string>
+    <string name="edit_txt_feeling">"Any Comments !"</string>
     <string name="check_transport_available">"Transport is available"</string>
     <string name="check_street_lights">"Street lights are available"</string>
+    <string name="overall_experience">"Overall experience"</string>
+    <string name="map_info">"Long press on map for safety audit."</string>
 
 
 </resources>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -26,10 +27,10 @@ public class Audit extends DialogFragment {
     float mLng;
 
     RatingBar ratingBar;
+    //ProgressBar progressBar;
     float rating;
     String mname,memail,mfeeling;
     int check_transport,check_street_light;
-
 
 
     static Audit newInstance(double lat,double lng) {
@@ -40,7 +41,6 @@ public class Audit extends DialogFragment {
         args.putDouble("lat", lat);
         args.putDouble("lng", lng);
         f.setArguments(args);
-
 
         return f;
     }
@@ -57,7 +57,6 @@ public class Audit extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_audit, container, false);
         final TextView tvRating = (TextView) v.findViewById(R.id.txt_rating);
         TextView tvLat = (TextView) v.findViewById(R.id.txt_lat);
@@ -67,9 +66,11 @@ public class Audit extends DialogFragment {
         final EditText feeling= (EditText) v.findViewById(R.id.edit_txt_feeling);
         final CheckBox transport_available= (CheckBox) v.findViewById(R.id.check_transport_available);
         final CheckBox street_lights__available= (CheckBox) v.findViewById(R.id.check_street_lights);
+        //progressBar= (ProgressBar) v.findViewById(R.id.progressBar2);
         tvLat.setText("Latitude : " + String.valueOf(mLat));
         tvLng.setText("Longitude : " + String.valueOf(mLng));
         ratingBar= (RatingBar) v.findViewById(R.id.ratingBar);
+        //progressBar.setVisibility(View.INVISIBLE);
         rating=ratingBar.getRating();
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -104,44 +105,47 @@ public class Audit extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+              //  progressBar.setVisibility(View.VISIBLE);
 
                 mname=name.getText().toString().trim();
                 memail=email.getText().toString().trim();
-                if(isEmailValid(memail)){
-                    mfeeling=feeling.getText().toString().trim();
-                    if(transport_available.isChecked()){
-                        check_transport=1;
-                    }
-                    else{
-                        check_transport=0;
-                    }
-                    if(street_lights__available.isChecked()){
-                        check_street_light=1;
-                    }
-                    else{
-                        check_street_light=0;
-                    }
+                mfeeling=feeling.getText().toString().trim();
 
-                    if(mname.isEmpty() || memail.isEmpty() || mfeeling.isEmpty()){
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Oops!").setMessage("your text is missing")
-                                .setPositiveButton(android.R.string.ok, null);
+                if(transport_available.isChecked()){
+                    check_transport=1;
+                }
+                else{
+                    check_transport=0;
+                }
+                if(street_lights__available.isChecked()){
+                    check_street_light=1;
+                }
+                else{
+                    check_street_light=0;
+                }
 
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }else {
-                        // When button is clicked, call up to owning activity.
-                        ((MainActivity) getActivity()).setAudit(mname, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
-                        getDialog().dismiss();
-                    }
-                }else{
+
+               if(mname.isEmpty() || memail.isEmpty() || mfeeling.isEmpty()){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Oops!").setMessage("Please fill all the details.")
+                            .setPositiveButton(android.R.string.ok, null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }else if(isEmailValid(memail)){
+
+                     getDialog().dismiss();
+                    // When button is clicked, call up to owning activity.
+                    ((MainActivity) getActivity()).setAudit(mname, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
+                }
+                else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Invalid email address")
-                            .setTitle("Warning")
+                            .setTitle("Alert!")
                             .setPositiveButton(android.R.string.ok,null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
+              // progressBar.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -158,13 +162,10 @@ public class Audit extends DialogFragment {
         return (int)rating;
     }
 
-
     public static boolean isEmailValid(String memail) {
         boolean isValid = false;
-
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
         CharSequence inputStr = memail;
-
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(inputStr);
         if (matcher.matches()) {
@@ -172,9 +173,11 @@ public class Audit extends DialogFragment {
         }else{
             isValid = false;
         }
-
         return isValid;
     }
+
+
+
 
 
 }
