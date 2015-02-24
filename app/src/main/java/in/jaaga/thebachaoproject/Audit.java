@@ -2,6 +2,9 @@ package in.jaaga.thebachaoproject;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -13,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -133,10 +137,17 @@ public class Audit extends DialogFragment {
                     dialog.show();
                 }else if(isEmailValid(memail)){
 
-                     getDialog().dismiss();
+
+                   if(getConnectivityStatus(getActivity())==0){
+                       Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                   }
+                   else{
+
+                   getDialog().dismiss();
                     // When button is clicked, call up to owning activity.
                     ((MainActivity) getActivity()).setAudit(mname, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
-                }
+                         }
+               }
                 else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Invalid email address")
@@ -174,6 +185,27 @@ public class Audit extends DialogFragment {
             isValid = false;
         }
         return isValid;
+    }
+
+    public static int getConnectivityStatus(Context context) {
+
+
+        int TYPE_WIFI = 1;
+        int TYPE_MOBILE = 2;
+        int TYPE_NOT_CONNECTED = 0;
+
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (null != activeNetwork) {
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                return TYPE_WIFI;
+
+            if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                return TYPE_MOBILE;
+        }
+        return TYPE_NOT_CONNECTED;
     }
 
 

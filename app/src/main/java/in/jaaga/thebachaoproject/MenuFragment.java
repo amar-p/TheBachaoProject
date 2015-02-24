@@ -73,12 +73,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
-     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -106,10 +100,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.btn_search_location:
+                mListener.searchLocation();
                 break;
             case R.id.btn_write_review:
+                mListener.writeReview();
                 break;
             case R.id.btn_get_reviews:
+                mListener.getReviews();
                 break;
 
         }
@@ -126,9 +123,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-         public void onFragmentInteraction(Uri uri);
-        public void goToUserLocation();
+
+         public void goToUserLocation();
+         public void searchLocation();
+         public void getReviews();
+         public void writeReview();
 
     }
-
 }

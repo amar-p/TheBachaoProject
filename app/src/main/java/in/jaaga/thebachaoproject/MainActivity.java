@@ -32,7 +32,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener{
+public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener,ReviewFragment.OnFragmentInteractionListener{
 
 
 
@@ -113,7 +113,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                  lat=iLatLng.getLatitude();
                  lng=iLatLng.getLongitude();
-                 showDialog();
+                 alertDialog();
             }
         });
 
@@ -142,7 +142,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    void showDialog() {
+    void showDialog(LatLng latLng) {
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
@@ -154,8 +154,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         ft.addToBackStack(null);
         // Create and show the dialog.
-        DialogFragment newFragment = Audit.newInstance(lat,lng);
+        DialogFragment newFragment = Audit.newInstance(latLng.getLatitude(),latLng.getLongitude());
         newFragment.show(ft,"dialog");
+    }
+
+    void alertDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you feeling uncomfortable or unsafe")
+                .setPositiveButton("Yes,I am",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setNegativeButton("No",null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
 
@@ -177,6 +192,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container, menuFragment).commit();
             break;
+
+            case R.id.btn_get_reviews:
+                getReviews();
+                break;
         }
     }
 
@@ -228,12 +247,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return gps_enabled;
     }
 
-    public static int TYPE_WIFI = 1;
-    public static int TYPE_MOBILE = 2;
-    public static int TYPE_NOT_CONNECTED = 0;
 
 
     public static int getConnectivityStatus(Context context) {
+
+
+        int TYPE_WIFI = 1;
+        int TYPE_MOBILE = 2;
+        int TYPE_NOT_CONNECTED = 0;
+
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -285,10 +307,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void searchLocation() {
 
     }
+
+    @Override
+    public void getReviews() {
+
+        //MenuFragment menuFragment=new MenuFragment();
+        Fragment reviewFragment=ReviewFragment.newInstance();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("menu");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+
+        ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container,reviewFragment).commit();
+
+    }
+
+    @Override
+    public void writeReview() {
+        LatLng latLng=mapView.getUserLocation();
+        showDialog(latLng);
+    }
+
 }
 

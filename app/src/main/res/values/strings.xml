@@ -15,6 +15,6 @@
     <string name="check_street_lights">"Street lights are available"</string>
     <string name="overall_experience">"Overall experience"</string>
     <string name="map_info">"Long press on map for safety audit."</string>
-
+    <string name="title_activity_detailed_review">Reviews</string>
 
 </resources>
