@@ -329,8 +329,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void writeReview() {
+
+        if(checkLocationService()){
         LatLng latLng=mapView.getUserLocation();
         showDialog(latLng);
+        }
+        else{
+            LatLng latLng=mapView.getCenter();
+            showDialog(latLng);
+        }
     }
 
 }
