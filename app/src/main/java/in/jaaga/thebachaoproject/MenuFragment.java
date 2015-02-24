@@ -56,7 +56,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_menu, container, false);
-        TableLayout table_menu= (TableLayout) v.findViewById(R.id.table_menu_container);
         Button btn_location_search= (Button) v.findViewById(R.id.btn_search_location);
         Button btn_get_reviews= (Button) v.findViewById(R.id.btn_get_reviews);
         Button btn_write_reviews= (Button) v.findViewById(R.id.btn_write_review);

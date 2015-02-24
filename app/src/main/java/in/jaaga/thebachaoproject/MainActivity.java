@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -39,7 +38,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private MapView mapView;
     private ProgressBar progressBar;
-    private Button getMyLocation;
+    private Button menuButton;
     double lat,lng;
 
 
@@ -55,16 +54,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         mapView = (MapView) findViewById(R.id.mapview);
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
-        getMyLocation= (Button) findViewById(R.id.btn_menu);
-        getMyLocation.setOnClickListener(this);
+        menuButton = (Button) findViewById(R.id.btn_menu);
+        menuButton.setOnClickListener(this);
 
-        mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
+        //mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
         mapView.zoomToBoundingBox(boundingBox);
         mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
         mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
         mapView.setCenter(iLatLng);
         mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
-        //mapView.setZoom(0);
+        mapView.setZoom(0);
         mapView.setSaveEnabled(true);
 
         goToUserLocation();
@@ -180,22 +179,22 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             case R.id.btn_menu:
 
-
-             //MenuFragment menuFragment=new MenuFragment();
-            Fragment menuFragment=MenuFragment.newInstance(getWindowManager().getDefaultDisplay().getWidth());
-
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 Fragment prev = getSupportFragmentManager().findFragmentByTag("menu");
                 if (prev != null) {
-                    ft.remove(prev);
+                    // ft.remove(prev);
                 }
+                else {
 
-            ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container, menuFragment).commit();
+                    //MenuFragment menuFragment=new MenuFragment();
+                    Fragment menuFragment = MenuFragment.newInstance(getWindowManager().getDefaultDisplay().getWidth());
+
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.menu_fragment_container, menuFragment,"menu").addToBackStack("menubutton").commit();
+                }
             break;
 
-            case R.id.btn_get_reviews:
-                getReviews();
-                break;
         }
     }
 
