@@ -191,7 +191,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
 
-                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.menu_fragment_container, menuFragment,"menu").addToBackStack("menubutton").commit();
+                    ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.menu_fragment_container, menuFragment, "menu").addToBackStack("menubutton").commit();
                 }
             break;
 
@@ -235,6 +235,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+    //check if location service is available or not.
     boolean checkLocationService(){
 
         boolean gps_enabled=false;
@@ -330,9 +331,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void writeReview() {
 
-        if(checkLocationService()){
-        LatLng latLng=mapView.getUserLocation();
-        showDialog(latLng);
+        if(checkLocationService()) {
+            LatLng latLng = mapView.getUserLocation();
+            showDialog(latLng);
         }
         else{
             LatLng latLng=mapView.getCenter();
