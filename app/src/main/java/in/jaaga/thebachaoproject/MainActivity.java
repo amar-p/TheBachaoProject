@@ -64,7 +64,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
         mapView.setCenter(iLatLng);
         mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
-        mapView.setZoom(0);
+        //mapView.setZoom(0);
         mapView.setSaveEnabled(true);
 
         goToUserLocation();
