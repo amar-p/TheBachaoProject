@@ -7,16 +7,22 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -30,6 +36,21 @@ import com.mapbox.mapboxsdk.views.MapViewListener;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener,ReviewFragment.OnFragmentInteractionListener{
 
@@ -39,6 +60,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private MapView mapView;
     private ProgressBar progressBar;
     private Button menuButton;
+    private EditText edit_text_search_box;
+    private ListView suggestions;
+
+    List<String> items;
     double lat,lng;
 
 
@@ -53,25 +78,35 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         BoundingBox boundingBox = new BoundingBox(neLatLng,swLattLng);
 
         mapView = (MapView) findViewById(R.id.mapview);
+        suggestions= (ListView) findViewById(R.id.listView);
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
         menuButton = (Button) findViewById(R.id.btn_menu);
+        edit_text_search_box = (EditText) findViewById(R.id.editText_search_box);
         menuButton.setOnClickListener(this);
-
         //mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
         mapView.zoomToBoundingBox(boundingBox);
         mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
         mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
         mapView.setCenter(iLatLng);
         mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
-        mapView.setZoom(0);
+        //mapView.setZoom(0);
         mapView.setSaveEnabled(true);
+
+        items=new ArrayList<>();
+        //items.add("test");
+
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                R.layout.search_list_item, items);
+
+
+        suggestions.setAdapter(adapter);
 
         goToUserLocation();
 
         if(getConnectivityStatus(getApplicationContext())==0){
             Toast.makeText(getApplicationContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
         }
-
         mapView.setMapViewListener(new MapViewListener() {
             @Override
             public void onShowMarker(MapView mapView, Marker marker) {
@@ -85,6 +120,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             @Override
             public void onTapMarker(MapView mapView, Marker marker) {
+
+
 
             }
 
@@ -113,6 +150,43 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                  lat=iLatLng.getLatitude();
                  lng=iLatLng.getLongitude();
                  alertDialog();
+            }
+        });
+
+        edit_text_search_box.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                //Toast.makeText(getApplicationContext(),s,Toast.LENGTH_SHORT).show();
+                //String search_query= (String) s;
+
+                ArrayAdapter<String> adapter = (ArrayAdapter<String>) suggestions.getAdapter();
+                try {
+                    adapter.addAll(searchLocation(s));
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                adapter.notifyDataSetChanged();
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if(s.length()==0 || s.length()==-1){
+                    items.clear();
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+                }
+
             }
         });
 
@@ -171,6 +245,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         dialog.show();
 
     }
+
+
 
 
     @Override
@@ -310,7 +386,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void searchLocation() {
 
+
     }
+
+
+    public List<String> searchLocation(CharSequence location) throws ExecutionException, InterruptedException {
+
+        String searchLocation=location.toString();
+
+        return new searchLocationThread().execute(searchLocation).get();
+
+    }
+
 
     @Override
     public void getReviews() {
@@ -332,12 +419,73 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void writeReview() {
 
         if(checkLocationService()) {
-            LatLng latLng = mapView.getUserLocation();
+            //LatLng latLng = mapView.getUserLocation();
+            LatLng latLng=mapView.getCenter();
             showDialog(latLng);
         }
         else{
             LatLng latLng=mapView.getCenter();
             showDialog(latLng);
+        }
+    }
+
+    protected class searchLocationThread extends AsyncTask<String,Void,List<String>>{
+
+        @Override
+        protected List<String> doInBackground(String... params) {
+
+            URL mapboxLocationUrl= null;
+            String[] locationarray= params;
+            String location=locationarray[0];
+
+
+            try {
+                mapboxLocationUrl = new URL("http://api.tiles.mapbox.com/v4/geocode/mapbox.places-permanent/"+location+".json?access_token=sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
+
+                HttpURLConnection connection = (HttpURLConnection) mapboxLocationUrl.openConnection();
+                connection.connect();
+               int length=connection.getContentLength();
+                if(length==-1){}
+
+                else{
+               char[] data=new char[length];
+
+
+
+
+            InputStream inputStream=connection.getInputStream();
+            Reader reader=new InputStreamReader(inputStream);
+            reader.read(data);
+            String responseData=new String(data);
+                JSONObject jsonObject=null;
+                try {
+                    jsonObject=new JSONObject(responseData);
+
+                    JSONArray jsonArray=jsonObject.getJSONArray("features");
+                    //jsonArray.getJSONObject(1).getString("text");
+                    System.out.println(jsonArray.getJSONObject(0).getString("place_name"));
+                    System.out.println(jsonArray.getJSONObject(0).getString("center"));
+
+                    items.clear();
+                    items.add(jsonArray.getJSONObject(0).getString("place_name"));
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                int responseCode= connection.getResponseCode();
+                System.out.println(responseCode);
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return items;
         }
     }
 
