@@ -47,25 +47,17 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPostalAddress"
-            android:ems="10"
-            android:id="@+id/editText_search_box"
-            android:gravity="center"
-            android:hint="search location" />
-
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="120dp"
-            android:id="@+id/listView"
-            android:layout_gravity="center"
-            android:layout_margin="2dp" />
+       <fragment
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:name="in.jaaga.thebachaoproject.SearchFragment"
+           android:id="@+id/searchFragment"/>
     </LinearLayout>
 
 </RelativeLayout>

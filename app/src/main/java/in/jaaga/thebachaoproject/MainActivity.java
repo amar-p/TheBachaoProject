@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -52,7 +53,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener,ReviewFragment.OnFragmentInteractionListener{
+public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener,SearchFragment.OnFragmentInteractionListener,ReviewFragment.OnFragmentInteractionListener{
 
 
 
@@ -60,10 +61,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private MapView mapView;
     private ProgressBar progressBar;
     private Button menuButton;
-    private EditText edit_text_search_box;
-    private ListView suggestions;
-
-    List<String> items;
     double lat,lng;
 
 
@@ -78,10 +75,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         BoundingBox boundingBox = new BoundingBox(neLatLng,swLattLng);
 
         mapView = (MapView) findViewById(R.id.mapview);
-        suggestions= (ListView) findViewById(R.id.listView);
+
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
         menuButton = (Button) findViewById(R.id.btn_menu);
-        edit_text_search_box = (EditText) findViewById(R.id.editText_search_box);
+
         menuButton.setOnClickListener(this);
         //mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
         mapView.zoomToBoundingBox(boundingBox);
@@ -91,16 +88,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
         //mapView.setZoom(0);
         mapView.setSaveEnabled(true);
-
-        items=new ArrayList<>();
-        //items.add("test");
-
-
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.search_list_item, items);
-
-
-        suggestions.setAdapter(adapter);
 
         goToUserLocation();
 
@@ -153,42 +140,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
 
-        edit_text_search_box.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                //Toast.makeText(getApplicationContext(),s,Toast.LENGTH_SHORT).show();
-                //String search_query= (String) s;
-
-                ArrayAdapter<String> adapter = (ArrayAdapter<String>) suggestions.getAdapter();
-                try {
-                    adapter.addAll(searchLocation(s));
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                adapter.notifyDataSetChanged();
-
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                if(s.length()==0 || s.length()==-1){
-                    items.clear();
-                    adapter.clear();
-                    adapter.notifyDataSetChanged();
-                }
-
-            }
-        });
 
     }
 
@@ -386,15 +337,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void searchLocation() {
 
+      //  SearchFragment fragment=new SearchFragment();
+       // getSupportFragmentManager().beginTransaction().add(fragment,"search").commit();
 
-    }
-
-
-    public List<String> searchLocation(CharSequence location) throws ExecutionException, InterruptedException {
-
-        String searchLocation=location.toString();
-
-        return new searchLocationThread().execute(searchLocation).get();
 
     }
 
@@ -429,65 +374,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    protected class searchLocationThread extends AsyncTask<String,Void,List<String>>{
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
-        @Override
-        protected List<String> doInBackground(String... params) {
-
-            URL mapboxLocationUrl= null;
-            String[] locationarray= params;
-            String location=locationarray[0];
-
-
-            try {
-                mapboxLocationUrl = new URL("http://api.tiles.mapbox.com/v4/geocode/mapbox.places-permanent/"+location+".json?access_token=sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
-
-                HttpURLConnection connection = (HttpURLConnection) mapboxLocationUrl.openConnection();
-                connection.connect();
-               int length=connection.getContentLength();
-                if(length==-1){}
-
-                else{
-               char[] data=new char[length];
-
-
-
-
-            InputStream inputStream=connection.getInputStream();
-            Reader reader=new InputStreamReader(inputStream);
-            reader.read(data);
-            String responseData=new String(data);
-                JSONObject jsonObject=null;
-                try {
-                    jsonObject=new JSONObject(responseData);
-
-                    JSONArray jsonArray=jsonObject.getJSONArray("features");
-                    //jsonArray.getJSONObject(1).getString("text");
-                    System.out.println(jsonArray.getJSONObject(0).getString("place_name"));
-                    System.out.println(jsonArray.getJSONObject(0).getString("center"));
-
-                    items.clear();
-                    items.add(jsonArray.getJSONObject(0).getString("place_name"));
-
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                int responseCode= connection.getResponseCode();
-                System.out.println(responseCode);
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return items;
-        }
     }
-
 }
 
