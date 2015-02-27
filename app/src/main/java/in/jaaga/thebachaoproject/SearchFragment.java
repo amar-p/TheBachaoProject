@@ -86,18 +86,13 @@ public class SearchFragment extends ListFragment {
 
                 //Toast.makeText(getApplicationContext(),s,Toast.LENGTH_SHORT).show();
                 //String search_query= (String) s;
-
-                ArrayAdapter<String> adapter = (ArrayAdapter<String>) getListAdapter();
                 try {
-                    // adapter.clear();
-
-                    adapter.addAll(searchLocation(s));
+                    searchLocation(s);
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                adapter.notifyDataSetChanged();
 
 
             }
@@ -125,13 +120,6 @@ public class SearchFragment extends ListFragment {
         edit_text_search_box.addTextChangedListener(textWatcher);
 
         return v;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -168,10 +156,11 @@ public class SearchFragment extends ListFragment {
 
 
 
-    public List<String> searchLocation(CharSequence location) throws ExecutionException, InterruptedException {
+    public void searchLocation(CharSequence location) throws ExecutionException, InterruptedException {
 
         String searchLocation=location.toString();
 
+        ArrayAdapter<String> adapter = (ArrayAdapter<String>) getListAdapter();
 
         thread=new searchLocationThread();
 
@@ -179,7 +168,11 @@ public class SearchFragment extends ListFragment {
         do{System.out.println("running");}while (thread.getStatus().equals(AsyncTask.Status.RUNNING));
         List<String> result=thread.execute(searchLocation).get();
 
-        return result;
+            // adapter.clear();
+
+            adapter.addAll(result);
+
+        adapter.notifyDataSetChanged();
 
     }
 
