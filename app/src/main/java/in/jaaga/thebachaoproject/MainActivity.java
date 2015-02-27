@@ -375,7 +375,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(String center) {
+
+        String[] c=center.split(",",2);
+        double lng= Double.parseDouble(c[0].replace("[",""));
+        double lat= Double.parseDouble(c[1].replace("]", ""));
+
+        ILatLng iLatLng=new LatLng(lat,lng);
+
+       // mapView.setCenter(iLatLng).getBoundingBox();
+        mapView.zoomToBoundingBox(mapView.setCenter(iLatLng).getBoundingBox()).setZoom(12);
+
+
 
     }
 }

@@ -42,13 +42,31 @@ import java.util.concurrent.ExecutionException;
 public class SearchFragment extends ListFragment {
 
 
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        public void onFragmentInteraction(String center);
+    }
+
     private EditText edit_text_search_box;
     //private ListView suggestions;
     HttpURLConnection connection;
     searchLocationThread thread=null;
 
     List<String> items;
+    List<String> center;
     TextWatcher textWatcher;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -69,6 +87,7 @@ public class SearchFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         items=new ArrayList<>();
+        center=new ArrayList<>();
         //items.add("test");
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.search_list_item, items);
@@ -102,6 +121,7 @@ public class SearchFragment extends ListFragment {
 
                 if(s.length()==0 || s.length()==-1){
                     items.clear();
+                    center.clear();
                     adapter.clear();
                     adapter.notifyDataSetChanged();
                 }
@@ -139,20 +159,6 @@ public class SearchFragment extends ListFragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
 
 
 
@@ -174,13 +180,15 @@ public class SearchFragment extends ListFragment {
 
         adapter.notifyDataSetChanged();
 
+
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        System.out.println(items.get(position).toString());
+        mListener.onFragmentInteraction(center.get(position));
+
     }
 
     protected class searchLocationThread extends AsyncTask<String,Void,List<String>>{
@@ -221,8 +229,10 @@ public class SearchFragment extends ListFragment {
                         System.out.println(jsonArray.getJSONObject(0).getString("center"));
 
                         items.clear();
+                        center.clear();
                         for(int i=0;i<jsonArray.length();i++) {
                             items.add(jsonArray.getJSONObject(i).getString("place_name"));
+                            center.add(jsonArray.getJSONObject(i).getString("center"));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
