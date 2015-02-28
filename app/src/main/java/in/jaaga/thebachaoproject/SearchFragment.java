@@ -178,6 +178,8 @@ public class SearchFragment extends ListFragment {
 
             adapter.addAll(result);
 
+
+
         adapter.notifyDataSetChanged();
 
 
@@ -230,6 +232,8 @@ public class SearchFragment extends ListFragment {
 
                         items.clear();
                         center.clear();
+
+
                         for(int i=0;i<jsonArray.length();i++) {
                             items.add(jsonArray.getJSONObject(i).getString("place_name"));
                             center.add(jsonArray.getJSONObject(i).getString("center"));
