@@ -34,8 +34,11 @@ import com.mapbox.mapboxsdk.overlay.Icon;
 import com.mapbox.mapboxsdk.overlay.Marker;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.mapbox.mapboxsdk.views.MapViewListener;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,6 +53,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 
@@ -90,6 +94,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView.setSaveEnabled(true);
 
         goToUserLocation();
+        getMarkers();
 
         if(getConnectivityStatus(getApplicationContext())==0){
             Toast.makeText(getApplicationContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
@@ -255,10 +260,62 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
-        Marker m=new Marker(mapView,feeling,"-"+name,new LatLng(lat,lng));
-        m.setIcon(new Icon(getApplicationContext(),Icon.Size.SMALL, "marker-stroked", "ee8a65"));
-        m.addTo(mapView);
-        mapView.addMarker(m);
+    }
+
+    public void getMarkers(){
+
+        //            progressBar.setVisibility(View.VISIBLE);
+        //code="current";
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("audit");
+        //query.whereWithinKilometers("location",new ParseGeoPoint(mapView.getCenter().getLatitude(),mapView.getCenter().getLongitude()),2);
+        //  query.fromLocalDatastore();
+        //query.whereExists("objectId");
+        //query.orderByAscending("createdAt");
+        //query.setLimit(1000);
+
+
+        try {
+
+            System.out.println("count is" +query.count());
+            //count=query.count();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+
+                                   @Override
+                                   public void done(List<ParseObject> parseObjects, ParseException e) {
+                                       if (e == null) {
+
+                                           int size = parseObjects.size();
+                                           System.out.println("Size is" + size);
+                                           for (int i = 0; i < parseObjects.size(); i++) {
+
+                                               ParseObject data = parseObjects.get(i);
+
+                                               Marker m=new Marker(mapView,data.getString("feeling"),"-"+data.getString("name"),new LatLng(data.getParseGeoPoint("location").getLatitude(),data.getParseGeoPoint("location").getLongitude()));
+                                               m.setIcon(new Icon(getApplicationContext(),Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+                                               mapView.addMarker(m);
+
+                                               data.pinInBackground();
+                                               // txt.setText(i);
+                                               //System.out.println(i);
+                                               //txt.append(data.getString("question") + "\n");
+                                           }
+                                           // object will be your game score
+
+                                       } else {
+
+                                           System.out.println("something went wrong");
+
+                                           // something went wrong
+                                       }
+                                   }
+                               }
+
+
+        );
 
     }
 
@@ -384,10 +441,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ILatLng iLatLng=new LatLng(lat,lng);
 
        // mapView.setCenter(iLatLng).getBoundingBox();
-        mapView.zoomToBoundingBox(mapView.setCenter(iLatLng).getBoundingBox()).setZoom(12);
-
-
+        mapView.zoomToBoundingBox(mapView.setCenter(iLatLng).getBoundingBox()).setZoom(13);
 
     }
+
+
+
+
+
 }
 
