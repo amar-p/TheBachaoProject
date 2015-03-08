@@ -7,8 +7,8 @@
     android:gravity="right">
 
     <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="176dp"
+        android:layout_height="176dp"
         android:background="@drawable/menu">
 
         <TableRow
@@ -17,15 +17,15 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:id="@+id/btn_search_location"
                 android:background="@drawable/menu_search"
-                android:layout_marginLeft="18dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginBottom="2dp"
-                android:layout_column="11" />
+                android:layout_column="11"
+                android:layout_marginTop="20dp" />
         </TableRow>
 
         <TableRow
@@ -34,14 +34,13 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:id="@+id/btn_get_reviews"
                 android:background="@drawable/menu_reviews"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="12dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="4dp"
-                android:layout_marginBottom="2dp"
                 android:layout_column="2" />
         </TableRow>
 
@@ -51,13 +50,12 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:id="@+id/btn_write_review"
                 android:background="@drawable/menu_write"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="2dp"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:layout_marginTop="15dp" />
         </TableRow>
 
         <TableRow
@@ -66,13 +64,13 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="28dp"
                 android:id="@+id/btn_location"
                 android:background="@drawable/menu_loc"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="25dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="12dp"
                 android:layout_column="0" />
         </TableRow>
     </TableLayout>
