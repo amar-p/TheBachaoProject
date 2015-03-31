@@ -18,32 +18,36 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/***A Dialog Fragment to show to the user when long pressed on mapView
- * Take the inputs in this dialog fragment and pass it to the MainActivity
+/***A Dialog Fragment to show to the user when clicked on write review button.
+ * Take the audit inputs in this dialog fragment and pass it to the MainActivity
  * for further processing.
  */
 
 public class Audit extends DialogFragment {
-    float mLat;
-    float mLng;
+
+    double mLat;
+    double mLng;
+    int rating;
 
     RatingBar ratingBar;
-    //ProgressBar progressBar;
-    float rating;
-    String mname,memail,mfeeling;
+    String mname,memail,mfeeling,mlocationName;
     int check_transport,check_street_light;
 
+    /*starts the new instance of this dialog fragment.
+    gets the Latitude,Longitude and the name of the place.*/
+    static Audit newInstance(double lat,double lng,String place_name) {
 
-    static Audit newInstance(double lat,double lng) {
         Audit f = new Audit();
-
-
         Bundle args = new Bundle();
         args.putDouble("lat", lat);
         args.putDouble("lng", lng);
+        args.putString("display_location_name",place_name);
+
         f.setArguments(args);
 
         return f;
@@ -52,10 +56,9 @@ public class Audit extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLat = (float) getArguments().getDouble("lat");
-        mLng = (float) getArguments().getDouble("lng");
-
-
+        mLat =  getArguments().getDouble("lat");
+        mLng =  getArguments().getDouble("lng");
+        mlocationName = getArguments().getString("display_location_name");
     }
 
     @Override
@@ -65,6 +68,7 @@ public class Audit extends DialogFragment {
         final TextView tvRating = (TextView) v.findViewById(R.id.txt_rating);
         TextView tvLat = (TextView) v.findViewById(R.id.txt_lat);
         TextView tvLng = (TextView) v.findViewById(R.id.txt_lng);
+        TextView tvPlaceName = (TextView) v.findViewById(R.id.txt_place_name);
         final EditText name= (EditText) v.findViewById(R.id.edit_txt_name);
         final EditText email= (EditText) v.findViewById(R.id.edit_txt_email);
         final EditText feeling= (EditText) v.findViewById(R.id.edit_txt_feeling);
@@ -73,9 +77,10 @@ public class Audit extends DialogFragment {
         //progressBar= (ProgressBar) v.findViewById(R.id.progressBar2);
         tvLat.setText("Latitude : " + String.valueOf(mLat));
         tvLng.setText("Longitude : " + String.valueOf(mLng));
+        tvPlaceName.setText(mlocationName);
         ratingBar= (RatingBar) v.findViewById(R.id.ratingBar);
         //progressBar.setVisibility(View.INVISIBLE);
-        rating=ratingBar.getRating();
+        rating= (int) ratingBar.getRating();
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -85,19 +90,19 @@ public class Audit extends DialogFragment {
 
                 setRating(rating);
 
-                if(rating==(float)5) {
+                if(rating== 5) {
                     tvRating.setText("Very Safe");
                 }
-                else if(rating==(float)4){
+                else if(rating== 4){
                         tvRating.setText("Safe");
                     }
-                else if(rating==(float)3){
+                else if(rating== 3){
                         tvRating.setText("Ok");
                     }
-                else if(rating==(float)2){
+                else if(rating== 2){
                         tvRating.setText("Not Safe");
                     }
-                else if(rating==(float)1){
+                else if(rating== 1){
                         tvRating.setText("UnSafe");
                     }
 
@@ -111,7 +116,7 @@ public class Audit extends DialogFragment {
 
               //  progressBar.setVisibility(View.VISIBLE);
 
-                mname=name.getText().toString().trim();
+               //mname=name.getText().toString().trim();
                 memail=email.getText().toString().trim();
                 mfeeling=feeling.getText().toString().trim();
 
@@ -129,25 +134,25 @@ public class Audit extends DialogFragment {
                 }
 
 
-               if(mname.isEmpty() || memail.isEmpty() || mfeeling.isEmpty()){
+           /*    if(mname.isEmpty() || memail.isEmpty() || mfeeling.isEmpty()){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Oops!").setMessage("Please fill all the details.")
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }else if(isEmailValid(memail)){
-
+*/
 
                    if(getConnectivityStatus(getActivity())==0){
-                       Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                       Toast.makeText(getActivity(),getString(R.string.msg_no_internet), Toast.LENGTH_SHORT).show();
                    }
                    else{
 
                    getDialog().dismiss();
                     // When button is clicked, call up to owning activity.
-                    ((MainActivity) getActivity()).setAudit(mname, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
+                    ((MainActivity) getActivity()).setAudit(mlocationName, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
                          }
-               }
+               /*}
                 else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Invalid email address")
@@ -155,7 +160,7 @@ public class Audit extends DialogFragment {
                             .setPositiveButton(android.R.string.ok,null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                }
+                }*/
               // progressBar.setVisibility(View.INVISIBLE);
 
             }
@@ -164,14 +169,18 @@ public class Audit extends DialogFragment {
         return v;
     }
 
+
+
     void setRating(float rating){
-        this.rating=rating;
+        this.rating= (int) rating;
     }
 
     int getRating(){
 
-        return (int)rating;
+        return rating;
     }
+
+
 
     public static boolean isEmailValid(String memail) {
         boolean isValid = false;
@@ -187,29 +196,24 @@ public class Audit extends DialogFragment {
         return isValid;
     }
 
-    public static int getConnectivityStatus(Context context) {
+        public static int getConnectivityStatus(Context context) {
 
 
-        int TYPE_WIFI = 1;
-        int TYPE_MOBILE = 2;
-        int TYPE_NOT_CONNECTED = 0;
+            int TYPE_WIFI = 1;
+            int TYPE_MOBILE = 2;
+            int TYPE_NOT_CONNECTED = 0;
 
-        ConnectivityManager cm = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (null != activeNetwork) {
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
-                return TYPE_WIFI;
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (null != activeNetwork) {
+                if(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                    return TYPE_WIFI;
 
-            if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
-                return TYPE_MOBILE;
+                if(activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                    return TYPE_MOBILE;
+            }
+            return TYPE_NOT_CONNECTED;
         }
-        return TYPE_NOT_CONNECTED;
-    }
-
-
-
-
-
 }

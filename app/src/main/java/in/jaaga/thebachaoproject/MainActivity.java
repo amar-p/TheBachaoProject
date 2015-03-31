@@ -1,13 +1,13 @@
 package in.jaaga.thebachaoproject;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -15,15 +15,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -40,32 +36,33 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener,SearchFragment.OnFragmentInteractionListener,ReviewFragment.OnFragmentInteractionListener{
-
-
+public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener,ReviewFragment.OnFragmentInteractionListener,SearchSuggestionsFragment.OnFragmentInteractionListener{
 
 
     private MapView mapView;
     private ProgressBar progressBar;
     private Button menuButton;
     double lat,lng;
+    getLocationInfoThread locationInfo;
 
 
     @Override
@@ -89,15 +86,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView.setMinZoomLevel(mapView.getTileProvider().getMinimumZoomLevel());
         mapView.setMaxZoomLevel(mapView.getTileProvider().getMaximumZoomLevel());
         mapView.setCenter(iLatLng);
-        mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
+        //mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
         //mapView.setZoom(0);
         mapView.setSaveEnabled(true);
+        final SearchSuggestionsFragment searchSuggestionsFragment=new SearchSuggestionsFragment();
+        searchSuggestionsFragment.setListener(this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.search_suggestions_container,searchSuggestionsFragment).commit();
 
-        goToUserLocation();
-        getMarkers();
 
         if(getConnectivityStatus(getApplicationContext())==0){
-            Toast.makeText(getApplicationContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),getString(R.string.msg_no_internet),Toast.LENGTH_SHORT).show();
         }
         mapView.setMapViewListener(new MapViewListener() {
             @Override
@@ -126,12 +124,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void onTapMap(MapView mapView, ILatLng iLatLng) {
 
                 if(getConnectivityStatus(getApplicationContext())==0){
-                    Toast.makeText(getApplicationContext(),"Please check your internet connection",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.msg_no_internet),Toast.LENGTH_SHORT).show();
                 }
-
+/*
                 lat=iLatLng.getLatitude();
                 lng=iLatLng.getLongitude();
+                System.out.println(mapView.getBoundingBox());*/
+                getSupportFragmentManager().popBackStackImmediate();
+                try {
+                    searchSuggestionsFragment.adapter.clear();
+                    searchSuggestionsFragment.adapter.notifyDataSetChanged();
+                }
+                catch (NullPointerException e){
 
+                }
                 //Toast.makeText(getApplicationContext(),lat+" "+lng,Toast.LENGTH_SHORT).show();
 
             }
@@ -148,30 +154,39 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        goToUserLocation();
+       // getMarkers();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
     }
 
-    void showDialog(LatLng latLng) {
+    void showDialog(LatLng latLng,String place_name) {
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
@@ -183,7 +198,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         ft.addToBackStack(null);
         // Create and show the dialog.
-        DialogFragment newFragment = Audit.newInstance(latLng.getLatitude(),latLng.getLongitude());
+        DialogFragment newFragment = Audit.newInstance(latLng.getLatitude(),latLng.getLongitude(),place_name);
         newFragment.show(ft,"dialog");
     }
 
@@ -230,15 +245,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    void setAudit(String name,String email,String feeling,int transport,int street_lights,int rating,double lat,double lng){
+    void setAudit(String locationname,String email,String feeling,int transport,int street_lights,int rating,double lat,double lon){
 
-        //TODO marker details will be from user data of audit...
-
-
-       // Toast.makeText(this,name+email+feeling,Toast.LENGTH_SHORT).show();
-
+        Calendar cal=Calendar.getInstance();
+        Date date=cal.getTime();
+        System.out.println(date.getTime());
         ParseObject audit=new ParseObject("audit");
-        audit.put("name",name);
+        audit.put("location_name",locationname);
         audit.put("email",email);
         audit.put("feeling",feeling);
         audit.put("transport",transport);
@@ -257,16 +270,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         }
         while(response==false);
+        getMarkers(lat,lon);
 
 
 
     }
 
-    public void getMarkers(){
+    public void getMarkers(double lat,double lon){
 
         //            progressBar.setVisibility(View.VISIBLE);
         //code="current";
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery("audit");
+        query.whereWithinKilometers("location",new ParseGeoPoint(lat,lon),2);
         //query.whereWithinKilometers("location",new ParseGeoPoint(mapView.getCenter().getLatitude(),mapView.getCenter().getLongitude()),2);
         //  query.fromLocalDatastore();
         //query.whereExists("objectId");
@@ -333,7 +349,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
-    public static int getConnectivityStatus(Context context) {
+    public int getConnectivityStatus(Context context) {
 
 
         int TYPE_WIFI = 1;
@@ -363,12 +379,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView.setUserLocationEnabled(true);
 
         if(checkLocationService()) {
-            mapView.goToUserLocation(true);
+            mapView.setZoom(16).goToUserLocation(true);
+            LatLng latLng = mapView.getUserLocation();
+            try{
+                getMarkers(latLng.getLatitude(),latLng.getLongitude());
+            }catch (NullPointerException e){}
         }
         else{
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("You need to turn on the Location Services")
-                    .setTitle("Turn on Location Service")
+            builder.setMessage(getString(R.string.msg_location_service_dialog))
+                    .setTitle(getString(R.string.title_location_service_dialog))
                     .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -394,9 +414,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void searchLocation() {
 
-      //  SearchFragment fragment=new SearchFragment();
+      //  SearchActivity fragment=new SearchActivity();
        // getSupportFragmentManager().beginTransaction().add(fragment,"search").commit();
-
+        getSupportFragmentManager().popBackStack();
 
     }
 
@@ -404,6 +424,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void getReviews() {
 
+        getSupportFragmentManager().popBackStack();
         //MenuFragment menuFragment=new MenuFragment();
         Fragment reviewFragment=ReviewFragment.newInstance();
 
@@ -420,33 +441,89 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void writeReview() {
 
+        progressBar.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().popBackStackImmediate();
+
         if(checkLocationService()) {
-            //LatLng latLng = mapView.getUserLocation();
-            LatLng latLng=mapView.getCenter();
-            showDialog(latLng);
+            LatLng latLng = mapView.getUserLocation();
+            locationInfo=new getLocationInfoThread();
+            locationInfo.execute(latLng);
         }
         else{
             LatLng latLng=mapView.getCenter();
-            showDialog(latLng);
+            locationInfo=new getLocationInfoThread();
+            locationInfo.execute(latLng);
+
+        }
+     //   progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    public JSONObject getLocationInfo(LatLng latlng){
+
+        locationInfo=new getLocationInfoThread();
+        JSONObject object=new JSONObject();
+
+        try {
+           object= locationInfo.execute(latlng).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return object;
+    }
+
+    protected class getLocationInfoThread extends AsyncTask<LatLng,Void,JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(LatLng... params) {
+
+            HttpClient httpClient = new DefaultHttpClient();
+            LatLng latLng=params.clone()[0];
+            String url="http://nominatim.openstreetmap.org/reverse?format=json&lat="+latLng.getLatitude()+"&lon="+latLng.getLongitude()+"&zoom=18&addressdetails=1";
+            HttpResponse response = null;
+            JSONObject object=new JSONObject();
+            String place_name="";
+
+
+            try {
+                HttpGet getMethod = new HttpGet(url);
+                response = httpClient.execute(getMethod);
+                String result = EntityUtils.toString(response.getEntity());
+                object=new JSONObject(result);
+                place_name=object.getString("display_name");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            showDialog(latLng,place_name);
+
+            return object;
+        }
+        @Override
+        protected void onPostExecute(JSONObject list) {
+            super.onPostExecute(list);
+
+
+           progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
     @Override
-    public void onFragmentInteraction(String center) {
+    public void onFragmentInteraction(HashMap<String,Double> data) {
 
-        String[] c=center.split(",",2);
-        double lng= Double.parseDouble(c[0].replace("[",""));
-        double lat= Double.parseDouble(c[1].replace("]", ""));
-
-        ILatLng iLatLng=new LatLng(lat,lng);
-
-       // mapView.setCenter(iLatLng).getBoundingBox();
-        mapView.zoomToBoundingBox(mapView.setCenter(iLatLng).getBoundingBox()).setZoom(13);
+        double lat= Double.valueOf(data.get("lat"));
+        double lon= Double.valueOf(data.get("lon"));
+        ILatLng iLatLng=new LatLng(lat,lon);
+        mapView.zoomToBoundingBox(mapView.setCenter(iLatLng).getBoundingBox()).setZoom(17);
+        getMarkers(lat,lon);
 
     }
-
-
-
 
 
 }

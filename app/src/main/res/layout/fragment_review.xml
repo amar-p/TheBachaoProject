@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Location Name"
-            android:id="@+id/textView2" />
+            android:id="@+id/txt_location_review_frag" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,7 +50,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/progressBar8"
+                    android:id="@+id/progressBar_five_stars"
                     android:layout_column="0"
                     android:progress="32"
                     android:layout_marginLeft="8dp"
@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="4"
-                    android:id="@+id/textView13"
+                    android:id="@+id/txt_total_five_stars"
                     android:layout_margin="2dp" />
             </TableRow>
 
@@ -81,7 +81,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/progressBar9"
+                    android:id="@+id/progressBar_four_stars"
                     android:layout_column="0"
                     android:progress="12"
                     android:layout_marginLeft="8dp"
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="4"
-                    android:id="@+id/textView15"
+                    android:id="@+id/txt_total_four_stars"
                     android:layout_margin="2dp" />
             </TableRow>
 
@@ -112,7 +112,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/progressBar10"
+                    android:id="@+id/progressBar_three_stars"
                     android:layout_column="0"
                     android:progress="6"
                     android:layout_marginLeft="8dp"
@@ -123,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="4"
-                    android:id="@+id/textView17"
+                    android:id="@+id/txt_total_three_stars"
                     android:layout_margin="2dp" />
             </TableRow>
 
@@ -143,7 +143,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/progressBar11"
+                    android:id="@+id/progressBar_two_stars"
                     android:layout_column="0"
                     android:progress="33"
                     android:layout_marginLeft="8dp"
@@ -154,7 +154,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="4"
-                    android:id="@+id/textView19"
+                    android:id="@+id/txt_total_two_stars"
                     android:layout_margin="2dp" />
             </TableRow>
 
@@ -174,7 +174,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/progressBar12"
+                    android:id="@+id/progressBar_one_stars"
                     android:layout_column="0"
                     android:progress="21"
                     android:layout_marginLeft="8dp"
@@ -185,7 +185,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="4"
-                    android:id="@+id/textView21"
+                    android:id="@+id/txt_total_one_stars"
                     android:layout_margin="2dp" />
             </TableRow>
 
@@ -203,13 +203,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Overall"
-                android:id="@+id/textView3" />
+                android:text="Average"
+                android:id="@+id/txt_avg_rating" />
 
             <Button
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:id="@+id/button"
+                android:id="@+id/btn_write_review_fragment"
                 android:background="@drawable/menu_write"
                 android:layout_margin="4dp" />
 

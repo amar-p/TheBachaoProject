@@ -1,19 +1,23 @@
 package in.jaaga.thebachaoproject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 
 
 public class ReviewFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+
+    /*starts the new instance of this fragment.
+    */
     public static ReviewFragment newInstance() {
         ReviewFragment fragment = new ReviewFragment();
         Bundle args = new Bundle();
@@ -27,13 +31,27 @@ public class ReviewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
       }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_review, container, false);
+        View v=inflater.inflate(R.layout.fragment_review, container, false);
+
+        TextView avg_rating= (TextView) v.findViewById(R.id.txt_avg_rating);
+        avg_rating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(),DetailedReviewActivity.class);
+                startActivity(intent);
+            }
+        });
+        return v;
     }
 
 

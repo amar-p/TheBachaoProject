@@ -21,6 +21,8 @@ import android.widget.TextView;
  * Use the {@link MenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+/*This Fragment is for the menu drawer with buttons to use on main screen */
 public class MenuFragment extends Fragment implements View.OnClickListener {
         private int mwidth;
 
@@ -31,7 +33,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         MenuFragment fragment = new MenuFragment();
         Bundle args = new Bundle();
       //  args.putString(ARG_PARAM1, param1);
-        args.putInt("mwidth", width);
+       // args.putInt("mwidth", width);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +47,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
            // mParam1 = getArguments().getString(ARG_PARAM1);
-            mwidth = getArguments().getInt("mwidth");
+          //    mwidth = getArguments().getInt("mwidth");
         }
 
 
@@ -116,10 +118,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
 

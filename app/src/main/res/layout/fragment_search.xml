@@ -1,26 +1,21 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"  android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true">
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="in.jaaga.thebachaoproject.SearchSuggestionsFragment">
 
-    <EditText
+    <ListView android:id="@android:id/list" android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView android:id="@android:id/empty" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:gravity="center" />
+
+    <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPostalAddress"
-        android:ems="10"
-        android:id="@+id/editText_search_box"
-        android:gravity="center"
-        android:hint="search location" />
+        android:id="@+id/progress_search"
+        android:layout_gravity="center_horizontal|top"
+        android:visibility="invisible"
+        style="?android:attr/progressBarStyleLargeInverse" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:id="@android:id/list"
-        android:layout_gravity="center"
-        android:layout_margin="2dp"
-        android:listSelector="#ffedf8ff" />
-
-</LinearLayout>
+</FrameLayout>
