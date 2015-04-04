@@ -257,7 +257,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         audit.put("transport",transport);
         audit.put("streetLights",street_lights);
         audit.put("rating",rating);
-        audit.put("location",new ParseGeoPoint(lat,lng));
+        audit.put("location",new ParseGeoPoint(lat,lon));
         boolean response;
         do{
             progressBar.setVisibility(View.VISIBLE);
