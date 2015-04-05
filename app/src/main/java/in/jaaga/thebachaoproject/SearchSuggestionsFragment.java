@@ -129,10 +129,7 @@ public class SearchSuggestionsFragment extends ListFragment{
         super.onListItemClick(l, v, position, id);
         mListener.onFragmentInteraction(place.get(position));
         getListView().setVisibility(View.INVISIBLE);
-        adapter.clear();
-        items.clear();
-        place.clear();
-        adapter.notifyDataSetChanged();
+
     }
 
     /**
@@ -176,7 +173,7 @@ public class SearchSuggestionsFragment extends ListFragment{
         thread=new searchLocationThread();
 
         adapter = (ArrayAdapter<String>) getListAdapter();
-        adapter.clear();
+        //adapter.clear();
         //adapter.notifyDataSetChanged();
 
         thread.execute(location);
