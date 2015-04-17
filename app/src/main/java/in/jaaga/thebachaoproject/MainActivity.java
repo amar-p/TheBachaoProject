@@ -63,6 +63,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Button menuButton;
     double lat,lng;
     getLocationInfoThread locationInfo;
+    SearchSuggestionsFragment searchSuggestionsFragment;
 
 
     @Override
@@ -89,7 +90,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //mapView.setAccessToken("sk.eyJ1IjoiYW1hcnAiLCJhIjoiOTZ0N2F4MCJ9.TTvMMwStKFMMN-nONyYJKA");
         //mapView.setZoom(0);
         mapView.setSaveEnabled(true);
-        final SearchSuggestionsFragment searchSuggestionsFragment=new SearchSuggestionsFragment();
+
+        searchSuggestionsFragment=new SearchSuggestionsFragment();
         searchSuggestionsFragment.setListener(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.search_suggestions_container,searchSuggestionsFragment).commit();
 
@@ -97,6 +99,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if(getConnectivityStatus(getApplicationContext())==0){
             Toast.makeText(getApplicationContext(),getString(R.string.msg_no_internet),Toast.LENGTH_SHORT).show();
         }
+        goToUserLocation();
+
         mapView.setMapViewListener(new MapViewListener() {
             @Override
             public void onShowMarker(MapView mapView, Marker marker) {
@@ -158,7 +162,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void onStart(){
         super.onStart();
 
-        goToUserLocation();
+
        // getMarkers();
     }
 
@@ -416,6 +420,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
       //  SearchActivity fragment=new SearchActivity();
        // getSupportFragmentManager().beginTransaction().add(fragment,"search").commit();
+
         getSupportFragmentManager().popBackStack();
 
     }
@@ -444,17 +449,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         progressBar.setVisibility(View.VISIBLE);
         getSupportFragmentManager().popBackStackImmediate();
 
-        if(checkLocationService()) {
-            LatLng latLng = mapView.getUserLocation();
-            locationInfo=new getLocationInfoThread();
-            locationInfo.execute(latLng);
-        }
-        else{
             LatLng latLng=mapView.getCenter();
             locationInfo=new getLocationInfoThread();
             locationInfo.execute(latLng);
-
-        }
      //   progressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -522,6 +519,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ILatLng iLatLng=new LatLng(lat,lon);
         mapView.zoomToBoundingBox(mapView.setCenter(iLatLng).getBoundingBox()).setZoom(17);
         getMarkers(lat,lon);
+        getReviews();
+
 
     }
 

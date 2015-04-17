@@ -18,6 +18,7 @@
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".SearchActivity" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"
@@ -28,14 +29,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".DetailedReviewActivity"
             android:label="@string/title_activity_detailed_review" >
         </activity>
 
-     <!--   <activity android:name=".SearchActivity">
+        <!--
+        <activity android:name=".SearchActivity">
         <intent-filter>
             <action android:name="android.intent.action.SEARCH" />
         </intent-filter>
@@ -44,9 +45,13 @@
                 android:resource="@xml/searchable"/>
 
 
-        </activity>-->
+        </activity>
+        -->
 
-</application>
-
+        <activity
+            android:name=".WriteDReviewActivity"
+            android:label="@string/title_activity_write_dreview" >
+        </activity>
+    </application>
 
 </manifest>

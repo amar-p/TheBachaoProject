@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -31,10 +32,6 @@ public class ReviewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-
       }
 
     @Override
@@ -43,7 +40,8 @@ public class ReviewFragment extends Fragment {
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_review, container, false);
 
-        TextView avg_rating= (TextView) v.findViewById(R.id.txt_avg_rating);
+        TextView avg_rating = (TextView) v.findViewById(R.id.txt_avg_rating);
+        Button write_review = (Button) v.findViewById(R.id.btn_write_review_fragment);
         avg_rating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,6 +49,15 @@ public class ReviewFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        write_review.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(),WriteDReviewActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return v;
     }
 

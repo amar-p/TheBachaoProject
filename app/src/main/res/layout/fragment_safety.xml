@@ -19,7 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:orientation="horizontal"
-        android:background="@drawable/newreviewbar"
         android:layout_marginTop="5dp">
 
         <LinearLayout
@@ -31,7 +30,8 @@
             <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/safety_2"/>
+                android:background="@drawable/safety_2"
+                android:layout_marginLeft="16dp" />
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
@@ -49,8 +49,7 @@
         android:layout_height="70dp"
         android:textSize="20sp"
         android:hint="  Add comment about transportation"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/newcommentbar"/>
+        android:layout_marginTop="40dp"/>
 
 
 

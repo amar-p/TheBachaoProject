@@ -21,4 +21,10 @@
     <string name="msg_no_internet">Please check your internet connection</string>
     <string name="msg_location_service_dialog">You need to turn on the Location Services</string>
     <string name="title_location_service_dialog">Turn on Location Service</string>
+    <string name="title_activity_write_detailed_review">WriteDetailedReviewActivity</string>
+
+    <string name="title_section1">Infrastructure</string>
+    <string name="title_section2">Safety</string>
+    <string name="title_section3">Transportation</string>
+    <string name="title_activity_write_dreview">Review</string>
 </resources>

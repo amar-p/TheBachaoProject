@@ -93,8 +93,10 @@ public class SearchSuggestionsFragment extends ListFragment{
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
+
         searchView.setOnQueryTextListener(queryListener);
     }
+
 
 
     final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {

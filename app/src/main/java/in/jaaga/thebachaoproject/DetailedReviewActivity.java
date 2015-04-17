@@ -1,5 +1,6 @@
 package in.jaaga.thebachaoproject;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -60,6 +61,13 @@ public class DetailedReviewActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detailed_review, container, false);
+            rootView.findViewById(R.id.btn_img_write_dreview).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent in = new Intent(getActivity(),WriteDReviewActivity.class);
+                    startActivity(in);
+                }
+            });
             return rootView;
         }
     }

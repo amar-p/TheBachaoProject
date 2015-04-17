@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="center_horizontal">
+    android:layout_gravity="center_horizontal"
+    android:padding="4dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -16,67 +17,73 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"/>
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
         android:orientation="horizontal"
-        android:background="@drawable/newreviewbar">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="13dp"
-            android:layout_marginLeft="10dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".7">
+
             <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/streetlight"/>
+                android:background="@drawable/streetlight"
+                android:id="@+id/imageButton"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="12dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Street lighting"/>
-        </LinearLayout>
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"/>
+                android:text="Street lighting"
+                android:id="@+id/textView2"
+                android:layout_marginBottom="6dp" />
 
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/newreviewbar">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="13dp"
-            android:layout_marginLeft="10dp">
             <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/people"/>
+                android:background="@drawable/people"
+                android:id="@+id/imageButton2"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="4dp" />
+
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="People around vicinity"/>
+                android:text="People around vicinity"
+                android:id="@+id/textView3" />
         </LinearLayout>
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"/>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".3">
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:id="@+id/ratingBar2" />
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:id="@+id/ratingBar2" />
+        </LinearLayout>
     </LinearLayout>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:textSize="20sp"
-        android:hint="  Add comment about infrastructure"
-
-        android:background="@drawable/newcommentbar"/>
+        android:hint="  Add comment about infrastructure"/>
 
 </LinearLayout>
