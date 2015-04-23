@@ -1,16 +1,12 @@
 package in.jaaga.thebachaoproject;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TableLayout;
-import android.widget.TextView;
 
 
 /**
@@ -24,7 +20,6 @@ import android.widget.TextView;
 
 /*This Fragment is for the menu drawer with buttons to use on main screen */
 public class MenuFragment extends Fragment implements View.OnClickListener {
-        private int mwidth;
 
     private OnFragmentInteractionListener mListener;
 

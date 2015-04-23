@@ -2,7 +2,6 @@ package in.jaaga.thebachaoproject;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 
 public class ReviewFragment extends Fragment {
@@ -19,9 +20,11 @@ public class ReviewFragment extends Fragment {
 
     /*starts the new instance of this fragment.
     */
-    public static ReviewFragment newInstance() {
+    public static ReviewFragment newInstance(LatLng latLng) {
         ReviewFragment fragment = new ReviewFragment();
         Bundle args = new Bundle();
+        args.putDouble("lat",latLng.getLatitude());
+        args.putDouble("long",latLng.getLongitude());
         return fragment;
     }
 
@@ -32,6 +35,11 @@ public class ReviewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(getArguments()!=null){
+
+
+        }
       }
 
     @Override
@@ -39,13 +47,13 @@ public class ReviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_review, container, false);
-
         TextView avg_rating = (TextView) v.findViewById(R.id.txt_avg_rating);
         Button write_review = (Button) v.findViewById(R.id.btn_write_review_fragment);
         avg_rating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(getActivity(),DetailedReviewActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -53,8 +61,9 @@ public class ReviewFragment extends Fragment {
         write_review.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getActivity(),WriteDReviewActivity.class);
-                startActivity(intent);
+
+                mListener.writeReview();
+
             }
         });
 
@@ -86,6 +95,7 @@ public class ReviewFragment extends Fragment {
      * activity.
      */
     public interface OnFragmentInteractionListener {
+        void writeReview();
         }
 
 }

@@ -27,10 +27,10 @@
             android:orientation="vertical"
             android:layout_marginTop="13dp"
             android:layout_marginLeft="10dp">
-            <ImageButton
+            <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/safety_2"
+                android:src="@drawable/safety_2"
                 android:layout_marginLeft="16dp" />
             <TextView
                 android:layout_width="100dp"
@@ -45,12 +45,21 @@
     </LinearLayout>
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textSize="20sp"
         android:hint="  Add comment about transportation"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="40dp"
+        android:id="@+id/input_text_comment_safety"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal" />
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_share_safety"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_action_share" />
 
 
 </LinearLayout>

@@ -28,18 +28,17 @@
         android:gravity="right"
         android:id="@+id/menu_fragment_container">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
+        <ImageButton
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:id="@+id/btn_menu"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/menu_icon"
-            android:layout_marginRight="4dp"
+            android:layout_marginRight="6dp"
             android:layout_gravity="right|bottom"
-            android:layout_marginBottom="2dp" />
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/menu_icon" />
     </FrameLayout>
 
     <ProgressBar
@@ -48,7 +47,7 @@
         android:id="@+id/progressBar"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:visibility="invisible"
+        android:visibility="gone"
         style="?android:attr/progressBarStyleLarge" />
 
 </RelativeLayout>

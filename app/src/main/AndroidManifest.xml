@@ -32,7 +32,13 @@
         </activity>
         <activity
             android:name=".DetailedReviewActivity"
-            android:label="@string/title_activity_detailed_review" >
+            android:label="@string/title_activity_detailed_review"
+            android:parentActivityName=".MainActivity" >
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
         </activity>
 
         <!--
@@ -50,7 +56,12 @@
 
         <activity
             android:name=".WriteDReviewActivity"
-            android:label="@string/title_activity_write_dreview" >
+            android:label="@string/title_activity_write_dreview"
+            android:parentActivityName=".MainActivity" >
+        <!-- Parent activity meta-data to support API level 7+ -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
         </activity>
     </application>
 

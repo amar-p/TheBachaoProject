@@ -1,28 +1,37 @@
 package in.jaaga.thebachaoproject;
 
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import android.app.Activity;
-import android.net.Uri;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-
-public class WriteDReviewActivity extends ActionBarActivity implements ActionBar.TabListener,InfrastructureFragment.OnFragmentInteractionListener,SafetyFragment.OnFragmentInteractionListener,TransportFragment.OnFragmentInteractionListener {
+public class WriteDReviewActivity extends ActionBarActivity implements ActionBar.TabListener,InfrastructureFragment.FragmentInfrastructureListener,SafetyFragment.SafetyFragmentListener,TransportFragment.TransportFragmentListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -39,6 +48,8 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
      */
 
     ViewPager mViewPager;
+    JSONObject jsonObject = new JSONObject();
+    PostAsyncTask postAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,11 +143,6 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -178,4 +184,87 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
             return null;
         }
     }
+
+    @Override
+    public void onInfrastructureFragmentInteraction(String url,JSONObject jsonObject) {
+
+        this.jsonObject=jsonObject;
+        postAsyncTask=new PostAsyncTask();
+        postAsyncTask.execute(url);
+
+    }
+
+    @Override
+    public void onSafetyFragmentInteraction(String url,JSONObject jsonObject) {
+
+        this.jsonObject=jsonObject;
+        postAsyncTask=new PostAsyncTask();
+        postAsyncTask.execute(url);
+
+    }
+
+    @Override
+    public void onTransportFragmentInteraction(String url,JSONObject jsonObject) {
+
+        this.jsonObject=jsonObject;
+        postAsyncTask=new PostAsyncTask();
+        postAsyncTask.execute(url);
+
+    }
+
+    private class PostAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+
+            InputStream inputStream = null;
+            String result = "";
+            try {
+            //create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+            // make POST request to the given URL
+            HttpPost httpPost = new HttpPost(urls[0]);
+            String json = "";
+            // convert JSONObject to JSON to String
+            json = jsonObject.toString();
+
+            // set json to StringEntity
+            StringEntity se = new StringEntity(json);
+            // set httpPost Entity
+            httpPost.setEntity(se);
+            // Set some headers to inform server about the type of the content   
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            // Execute POST request to the given URL
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            // receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+            // convert inputstream to string
+            if(inputStream != null) {
+                result = convertInputStreamToString(inputStream);
+            }
+                else{
+                    result = "Data is not posted!";}
+            } catch (Exception e) {
+                Log.d("InputStream", e.getLocalizedMessage());
+            }
+            return result;
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+    }
+
 }

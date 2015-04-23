@@ -9,17 +9,17 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -41,18 +41,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener,MenuFragment.OnFragmentInteractionListener,ReviewFragment.OnFragmentInteractionListener,SearchSuggestionsFragment.OnFragmentInteractionListener{
@@ -60,10 +56,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private MapView mapView;
     private ProgressBar progressBar;
-    private Button menuButton;
+    private ImageButton menuButton;
     double lat,lng;
     getLocationInfoThread locationInfo;
     SearchSuggestionsFragment searchSuggestionsFragment;
+    String location_name="";
 
 
     @Override
@@ -79,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mapView = (MapView) findViewById(R.id.mapview);
 
         progressBar= (ProgressBar) findViewById(R.id.progressBar);
-        menuButton = (Button) findViewById(R.id.btn_menu);
+        menuButton = (ImageButton) findViewById(R.id.btn_menu);
 
         menuButton.setOnClickListener(this);
         //mapView.loadFromGeoJSONURL("https://a.tiles.mapbox.com/v4/amarp.l46caon4/features.json?access_token=pk.eyJ1IjoiYW1hcnAiLCJhIjoiMzQ2Q2JpZyJ9.qNRj5mHyu5KjGwtjYoOe0w");
@@ -161,11 +158,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onStart(){
         super.onStart();
-
-
        // getMarkers();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedState){
+        super.onSaveInstanceState(savedState);
+    }
+
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedState){
+        super.onRestoreInstanceState(savedState);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -202,7 +207,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         ft.addToBackStack(null);
         // Create and show the dialog.
-        DialogFragment newFragment = Audit.newInstance(latLng.getLatitude(),latLng.getLongitude(),place_name);
+        DialogFragment newFragment = Audit.newInstance(latLng.getLatitude(), latLng.getLongitude(), place_name);
         newFragment.show(ft,"dialog");
     }
 
@@ -215,7 +220,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
-                }).setNegativeButton("No",null);
+                }).setNegativeButton("No", null);
         AlertDialog dialog = builder.create();
         dialog.show();
 
@@ -258,7 +263,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         audit.put("location_name",locationname);
         audit.put("email",email);
         audit.put("feeling",feeling);
-        audit.put("transport",transport);
+        audit.put("transport", transport);
         audit.put("streetLights",street_lights);
         audit.put("rating",rating);
         audit.put("location",new ParseGeoPoint(lat,lon));
@@ -274,7 +279,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         }
         while(response==false);
-        getMarkers(lat,lon);
+        getMarkers(lat, lon);
 
 
 
@@ -286,7 +291,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //code="current";
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("audit");
-        query.whereWithinKilometers("location",new ParseGeoPoint(lat,lon),2);
+        query.whereWithinKilometers("location", new ParseGeoPoint(lat, lon), 2);
         //query.whereWithinKilometers("location",new ParseGeoPoint(mapView.getCenter().getLatitude(),mapView.getCenter().getLongitude()),2);
         //  query.fromLocalDatastore();
         //query.whereExists("objectId");
@@ -314,8 +319,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                                                ParseObject data = parseObjects.get(i);
 
-                                               Marker m=new Marker(mapView,data.getString("feeling"),"-"+data.getString("name"),new LatLng(data.getParseGeoPoint("location").getLatitude(),data.getParseGeoPoint("location").getLongitude()));
-                                               m.setIcon(new Icon(getApplicationContext(),Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+                                               Marker m = new Marker(mapView, data.getString("feeling"), "-" + data.getString("name"), new LatLng(data.getParseGeoPoint("location").getLatitude(), data.getParseGeoPoint("location").getLongitude()));
+                                               m.setIcon(new Icon(getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
                                                mapView.addMarker(m);
 
                                                data.pinInBackground();
@@ -431,7 +436,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         getSupportFragmentManager().popBackStack();
         //MenuFragment menuFragment=new MenuFragment();
-        Fragment reviewFragment=ReviewFragment.newInstance();
+        LatLng latLng=mapView.getCenter();
+
+        Fragment reviewFragment=ReviewFragment.newInstance(latLng);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("menu");
@@ -439,7 +446,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             ft.remove(prev);
         }
 
-        ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container,reviewFragment).commit();
+        ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container, reviewFragment).commit();
 
     }
 
@@ -450,34 +457,34 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         getSupportFragmentManager().popBackStackImmediate();
 
             LatLng latLng=mapView.getCenter();
+
             locationInfo=new getLocationInfoThread();
             locationInfo.execute(latLng);
+
+         //   WriteDReviewActivity.newInstance(latLng,location_name);
      //   progressBar.setVisibility(View.INVISIBLE);
     }
 
-    public JSONObject getLocationInfo(LatLng latlng){
+    public void startReviewActivity(LatLng latLng){
 
-        locationInfo=new getLocationInfoThread();
-        JSONObject object=new JSONObject();
 
-        try {
-           object= locationInfo.execute(latlng).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return object;
+        Intent in = new Intent(this,WriteDReviewActivity.class);
+        in.putExtra("lat",latLng.getLatitude());
+        in.putExtra("long",latLng.getLongitude());
+        in.putExtra("location",location_name);
+        in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(in);
+
     }
 
-    protected class getLocationInfoThread extends AsyncTask<LatLng,Void,JSONObject> {
+    protected class getLocationInfoThread extends AsyncTask<LatLng,Void,String> {
 
         @Override
-        protected JSONObject doInBackground(LatLng... params) {
+        protected String doInBackground(LatLng... params) {
 
             HttpClient httpClient = new DefaultHttpClient();
             LatLng latLng=params.clone()[0];
-            String url="http://nominatim.openstreetmap.org/reverse?format=json&lat="+latLng.getLatitude()+"&lon="+latLng.getLongitude()+"&zoom=18&addressdetails=1";
+            String url="http://nominatim.openstreetmap.org/reverse?format=json&lat=&lon=&zoom=18&addressdetails=1";
             HttpResponse response = null;
             JSONObject object=new JSONObject();
             String place_name="";
@@ -498,16 +505,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
-            showDialog(latLng,place_name);
+            //showDialog(latLng,place_name);
+            location_name=place_name;
+            startReviewActivity(latLng);
 
-            return object;
+            return place_name;
         }
         @Override
-        protected void onPostExecute(JSONObject list) {
-            super.onPostExecute(list);
+        protected void onPostExecute(String location) {
+            super.onPostExecute(location);
 
-
-           progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
