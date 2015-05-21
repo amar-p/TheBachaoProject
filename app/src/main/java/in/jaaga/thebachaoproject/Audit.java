@@ -1,7 +1,6 @@
 package in.jaaga.thebachaoproject;
 
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,12 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -150,7 +146,7 @@ public class Audit extends DialogFragment {
 
                    getDialog().dismiss();
                     // When button is clicked, call up to owning activity.
-                    ((MainActivity) getActivity()).setAudit(mlocationName, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
+                  //  ((MainActivity) getActivity()).setAudit(mlocationName, memail, mfeeling, check_transport, check_street_light, getRating(), mLat, mLng);
                          }
                /*}
                 else{

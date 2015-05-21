@@ -8,23 +8,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.mapbox.mapboxsdk.geometry.LatLng;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class ReviewFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    JSONObject data;
 
     /*starts the new instance of this fragment.
     */
-    public static ReviewFragment newInstance(LatLng latLng) {
+    public static ReviewFragment newInstance(String data) {
         ReviewFragment fragment = new ReviewFragment();
         Bundle args = new Bundle();
-        args.putDouble("lat",latLng.getLatitude());
-        args.putDouble("long",latLng.getLongitude());
+        args.putString("data", data);
+
         return fragment;
     }
 
@@ -38,6 +41,11 @@ public class ReviewFragment extends Fragment {
 
         if(getArguments()!=null){
 
+            try {
+                data = new JSONObject(getArguments().getString("data"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         }
       }
@@ -48,6 +56,7 @@ public class ReviewFragment extends Fragment {
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_review, container, false);
         TextView avg_rating = (TextView) v.findViewById(R.id.txt_avg_rating);
+
         Button write_review = (Button) v.findViewById(R.id.btn_write_review_fragment);
         avg_rating.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +76,20 @@ public class ReviewFragment extends Fragment {
             }
         });
 
+        if(data!=null){
+
+            try {
+                ((TextView) v.findViewById(R.id.txt_avg_rating)).setText(data.getString("a"));
+                ((TextView) v.findViewById(R.id.txt_location_review_frag)).setText(data.getString("a"));
+                ((ProgressBar) v.findViewById(R.id.progressBar_five_stars)).setProgress(data.getInt("a"));
+                ((ProgressBar) v.findViewById(R.id.progressBar_four_stars)).setProgress(data.getInt("a"));
+                ((ProgressBar) v.findViewById(R.id.progressBar_three_stars)).setProgress(data.getInt("a"));
+                ((ProgressBar) v.findViewById(R.id.progressBar_two_stars)).setProgress(data.getInt("a"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+         }
+      }
         return v;
     }
 

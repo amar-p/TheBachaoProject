@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal"
+    android:padding="4dp">
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -19,63 +25,53 @@
         android:layout_gravity="center_horizontal"/>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".7">
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/streetlight"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center" />
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/streetlight"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="12dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Street lighting"
+            android:id="@+id/textView2"
+            android:layout_marginBottom="6dp"
+            android:layout_gravity="center" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Street lighting"
-                android:id="@+id/textView2"
-                android:layout_marginBottom="6dp" />
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rating_bar_street_lighting"
+            android:layout_gravity="center"
+            android:rating="1" />
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/people"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="4dp" />
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/people"
+            android:layout_marginTop="4dp"
+            android:layout_gravity="center" />
 
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="People around vicinity"
-                android:id="@+id/textView3" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="People around vicinity"
+            android:id="@+id/textView3"
+            android:layout_gravity="center" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".3">
-
-            <RatingBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:id="@+id/ratingBar2" />
-
-            <RatingBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:id="@+id/ratingBar2" />
-        </LinearLayout>
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rating_bar_people_around"
+            android:layout_gravity="center"
+            android:rating="1" />
     </LinearLayout>
 
     <EditText
@@ -84,9 +80,8 @@
         android:textSize="20sp"
         android:hint="  Add comment about infrastructure"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="10dp"
         android:inputType="text"
-        android:id="@+id/input_text_comment_infra" />
+        android:id="@+id/txt_comment_infra" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -96,3 +91,4 @@
         android:src="@drawable/ic_action_share" />
 
 </LinearLayout>
+    </ScrollView>

@@ -50,12 +50,17 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
     ViewPager mViewPager;
     JSONObject jsonObject = new JSONObject();
     PostAsyncTask postAsyncTask;
+    double lat,lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_dreview);
 
+        if(getIntent().getExtras()!=null){
+            lat=getIntent().getExtras().getDouble("lat");
+            lon=getIntent().getExtras().getDouble("long");
+        }
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -186,29 +191,29 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
     }
 
     @Override
-    public void onInfrastructureFragmentInteraction(String url,JSONObject jsonObject) {
+    public void onInfrastructureFragmentInteraction(int street_light,int people_around,String comments) {
 
-        this.jsonObject=jsonObject;
+        //todo make url from data
         postAsyncTask=new PostAsyncTask();
-        postAsyncTask.execute(url);
+        postAsyncTask.execute();
 
     }
 
     @Override
-    public void onSafetyFragmentInteraction(String url,JSONObject jsonObject) {
+    public void onSafetyFragmentInteraction(int safety,String comments) {
 
-        this.jsonObject=jsonObject;
+        //todo make url from data
         postAsyncTask=new PostAsyncTask();
-        postAsyncTask.execute(url);
+        postAsyncTask.execute();
 
     }
 
     @Override
-    public void onTransportFragmentInteraction(String url,JSONObject jsonObject) {
+    public void onTransportFragmentInteraction(int transport,int taxi,String comments) {
 
-        this.jsonObject=jsonObject;
+        //todo make url from data
         postAsyncTask=new PostAsyncTask();
-        postAsyncTask.execute(url);
+        postAsyncTask.execute();
 
     }
 
@@ -222,8 +227,20 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
             //create HttpClient
             HttpClient httpclient = new DefaultHttpClient();
             // make POST request to the given URL
-            HttpPost httpPost = new HttpPost(urls[0]);
+            HttpPost httpPost = new HttpPost("http://192.168.129.182:8010/maps/submit");
             String json = "";
+
+
+                JSONObject jsonObject=new JSONObject();
+                jsonObject.put("lat","22.700");
+                jsonObject.put("long","73.245");
+                jsonObject.put("date","2015-04-12");
+                jsonObject.put("time","12:52:22");
+                jsonObject.put("category","any");
+                jsonObject.put("rating","5");
+                jsonObject.put("review","sfsf");
+
+
             // convert JSONObject to JSON to String
             json = jsonObject.toString();
 
@@ -231,8 +248,7 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
             StringEntity se = new StringEntity(json);
             // set httpPost Entity
             httpPost.setEntity(se);
-            // Set some headers to inform server about the type of the content   
-            httpPost.setHeader("Accept", "application/json");
+            //httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
             // Execute POST request to the given URL
             HttpResponse httpResponse = httpclient.execute(httpPost);
@@ -252,7 +268,7 @@ public class WriteDReviewActivity extends ActionBarActivity implements ActionBar
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(),result, Toast.LENGTH_LONG).show();
         }
     }
 

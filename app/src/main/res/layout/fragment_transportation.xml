@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="4dp">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,64 +24,53 @@
         android:layout_gravity="center_horizontal"/>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".7">
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/bus"
+            android:layout_gravity="center" />
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginLeft="16dp"
-                android:src="@drawable/bus" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Public transport"
+            android:id="@+id/textView5"
+            android:layout_gravity="center" />
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:text="Public transport"
-                android:id="@+id/textView5"
-                android:layout_marginBottom="6dp" />
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rating_bar_public_transport"
+            android:layout_gravity="center"
+            android:rating="1" />
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="4dp"
-                android:src="@drawable/taxi" />
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/taxi"
+            android:layout_gravity="center" />
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:text="Taxi/Auto rickshaw availability"
-                android:id="@+id/textView6" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Taxi/Auto rickshaw availability"
+            android:id="@+id/textView6"
+            android:layout_gravity="center" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight=".3">
-
-            <RatingBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:id="@+id/ratingBar3" />
-
-            <RatingBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:id="@+id/ratingBar4"
-                android:focusableInTouchMode="false" />
-        </LinearLayout>
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rating_bar_taxi"
+            android:focusableInTouchMode="false"
+            android:layout_gravity="center"
+            android:rating="1" />
     </LinearLayout>
 
     <EditText
@@ -85,8 +80,7 @@
         android:hint="  Add comment about transportation"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
-        android:id="@+id/input_text_comment_transport"
-        android:layout_marginTop="50dp" />
+        android:id="@+id/txt_comment_transport" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -97,3 +91,4 @@
 
 
 </LinearLayout>
+    </ScrollView>

@@ -1,14 +1,14 @@
 package in.jaaga.thebachaoproject;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.json.JSONObject;
+import android.widget.EditText;
+import android.widget.RatingBar;
 
 
 /**
@@ -16,13 +16,16 @@ import org.json.JSONObject;
  * Activities that contain this fragment must implement the
  * {@link TransportFragment.TransportFragmentListener} interface
  * to handle interaction events.
- * Use the {@link TransportFragment#newInstance} factory method to
+ * Use the {@link TransportFragment} factory method to
  * create an instance of this fragment.
  */
 public class TransportFragment extends Fragment {
 
 
     private TransportFragmentListener mListener;
+    RatingBar publicTransport;
+    RatingBar taxi;
+    EditText comments;
 
     /**
      * Use this factory method to create a new instance of
@@ -55,6 +58,11 @@ public class TransportFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_transportation, container, false);
+        publicTransport = (RatingBar) rootView.findViewById(R.id.rating_bar_public_transport);
+        taxi = (RatingBar) rootView.findViewById(R.id.rating_bar_taxi);
+        comments = (EditText) rootView.findViewById(R.id.txt_comment_transport);
+
+
 
         rootView.findViewById(R.id.btn_share_transport).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +77,11 @@ public class TransportFragment extends Fragment {
     }
 
     private void postData() {
-       // mListener.onTransportFragmentInteraction();
+        int transport_rating= (int) publicTransport.getRating();
+        int taxi_rating= (int) taxi.getRating();
+        String comment = comments.getText().toString();
+
+       mListener.onTransportFragmentInteraction(transport_rating,taxi_rating,comment);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -108,7 +120,7 @@ public class TransportFragment extends Fragment {
      */
     public interface TransportFragmentListener {
         // TODO: Update argument type and name
-        public void onTransportFragmentInteraction(String url,JSONObject jsonObject);
+        public void onTransportFragmentInteraction(int transport,int taxi,String comments);
     }
 
 }

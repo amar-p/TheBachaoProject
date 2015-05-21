@@ -1,19 +1,22 @@
 package in.jaaga.thebachaoproject;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.json.JSONObject;
+import android.widget.EditText;
+import android.widget.RatingBar;
 
 
 public class SafetyFragment extends Fragment {
 
     private SafetyFragmentListener mListener;
+    RatingBar safety;
+    EditText comments;
+
 
 
     public SafetyFragment() {
@@ -31,6 +34,8 @@ public class SafetyFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_safety, container, false);
+        safety = (RatingBar) rootView.findViewById(R.id.rating_bar_safety);
+        comments = (EditText) rootView.findViewById(R.id.txt_comment_safety);
 
         rootView.findViewById(R.id.btn_share_safety).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +50,11 @@ public class SafetyFragment extends Fragment {
     }
 
     private void postData() {
-       // mListener.onSafetyFragmentInteraction();
+
+        int safety_rating= (int) safety.getRating();
+        String comment = comments.getText().toString();
+        mListener.onSafetyFragmentInteraction(safety_rating,comment);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -85,6 +94,6 @@ public class SafetyFragment extends Fragment {
 
     public interface SafetyFragmentListener {
         // TODO: Update argument type and name
-        public void onSafetyFragmentInteraction(String url,JSONObject jsonObject);
+        public void onSafetyFragmentInteraction(int safety,String comments);
     }
 }

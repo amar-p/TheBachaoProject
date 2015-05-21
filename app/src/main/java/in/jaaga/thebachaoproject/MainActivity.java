@@ -59,6 +59,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ImageButton menuButton;
     double lat,lng;
     getLocationInfoThread locationInfo;
+    getReviewsAsyncTask reviewsAsyncTask;
     SearchSuggestionsFragment searchSuggestionsFragment;
     String location_name="";
 
@@ -227,8 +228,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-
-
     @Override
     public void onClick(View v) {
         switch(v.getId()){
@@ -270,7 +269,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         boolean response;
         do{
             progressBar.setVisibility(View.VISIBLE);
-            response=audit.saveInBackground().isCompleted();
+            response=true;
             System.out.println(response);
             if(response){
                 progressBar.setVisibility(View.INVISIBLE);
@@ -280,9 +279,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         while(response==false);
         getMarkers(lat, lon);
-
-
-
     }
 
     public void getMarkers(double lat,double lon){
@@ -438,15 +434,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //MenuFragment menuFragment=new MenuFragment();
         LatLng latLng=mapView.getCenter();
 
-        Fragment reviewFragment=ReviewFragment.newInstance(latLng);
+        reviewsAsyncTask = new getReviewsAsyncTask();
+        String url = "http://nominatim.openstreetmap.org/search?q=bangalore&format=json&addressdetails=1";
+        reviewsAsyncTask.execute(url);
+        progressBar.setVisibility(View.VISIBLE);
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("menu");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-
-        ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container, reviewFragment).commit();
 
     }
 
@@ -484,7 +476,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             HttpClient httpClient = new DefaultHttpClient();
             LatLng latLng=params.clone()[0];
-            String url="http://nominatim.openstreetmap.org/reverse?format=json&lat=&lon=&zoom=18&addressdetails=1";
+            String url="http://nominatim.openstreetmap.org/reverse?format=json&lat="+latLng.getLatitude()+"&lon="+latLng.getLongitude()+"&zoom=18&addressdetails=1";
             HttpResponse response = null;
             JSONObject object=new JSONObject();
             String place_name="";
@@ -519,6 +511,49 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
+    protected class getReviewsAsyncTask extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+
+            HttpClient httpClient = new DefaultHttpClient();
+            String url = params[0];
+            //String url="http://nominatim.openstreetmap.org/search?q="+ URLEncoder.encode(location)+"&format=json&addressdetails=1";
+            HttpResponse response = null;
+            String result="";
+
+            try {
+                HttpGet getMethod = new HttpGet(url);
+                response = httpClient.execute(getMethod);
+                result = EntityUtils.toString(response.getEntity());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            progressBar.setVisibility(View.GONE);
+
+            Fragment reviewFragment=ReviewFragment.newInstance(result);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment prev = getSupportFragmentManager().findFragmentByTag("menu");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+
+            ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right).addToBackStack("menu").replace(R.id.menu_fragment_container, reviewFragment).commit();
+
+        }
+    }
+
     @Override
     public void onFragmentInteraction(HashMap<String,Double> data) {
 
@@ -531,6 +566,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     }
+
 
 
 }

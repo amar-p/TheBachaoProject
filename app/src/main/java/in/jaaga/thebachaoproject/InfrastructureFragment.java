@@ -3,18 +3,20 @@ package in.jaaga.thebachaoproject;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.json.JSONObject;
+import android.widget.EditText;
+import android.widget.RatingBar;
 
 
 public class InfrastructureFragment extends Fragment {
 
     private FragmentInfrastructureListener mListener;
+    RatingBar streetLighting;
+    RatingBar peopleAround;
+    EditText comments;
 
 
 
@@ -33,6 +35,10 @@ public class InfrastructureFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_infrastructure, container, false);
+        streetLighting = (RatingBar) rootView.findViewById(R.id.rating_bar_street_lighting);
+        peopleAround = (RatingBar) rootView.findViewById(R.id.rating_bar_people_around);
+        comments = (EditText) rootView.findViewById(R.id.txt_comment_infra);
+
 
         rootView.findViewById(R.id.btn_share_infra).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +53,14 @@ public class InfrastructureFragment extends Fragment {
 
     private void postData() {
 
-       // mListener.onInfrastructureFragmentInteraction();
+
+        int street_lighting= (int) streetLighting.getRating();
+        int people_around= (int) peopleAround.getRating();
+        String comment = comments.getText().toString();
+            mListener.onInfrastructureFragmentInteraction(street_lighting,people_around,comment);
+
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -86,7 +99,7 @@ public class InfrastructureFragment extends Fragment {
      */
     public interface FragmentInfrastructureListener {
         // TODO: Update argument type and name
-        void onInfrastructureFragmentInteraction(String url,JSONObject jsonObject);
+        void onInfrastructureFragmentInteraction(int street_light,int people_around,String comments);
     }
 
 }
