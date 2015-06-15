@@ -1,0 +1,143 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="in.jaaga.thebachaoproject.Audit">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/txt_lat"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/btn_ok"
+        android:layout_toStartOf="@+id/btn_ok"
+        android:layout_margin="4dp"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/txt_lng"
+        android:layout_gravity="center_horizontal|top"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_toEndOf="@+id/btn_ok"
+        android:layout_margin="4dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_txt_submit"
+        android:id="@+id/btn_ok"
+        android:layout_gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ratingBar"
+        android:layout_above="@+id/btn_ok"
+        android:layout_centerHorizontal="true"
+        android:stepSize="1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/txt_place_name"
+        android:layout_marginTop="70dp"
+        android:layout_below="@+id/txt_lat"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/edit_txt_name"
+        android:layout_below="@+id/txt_lat"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"
+        android:hint="@string/hint_name"
+        android:layout_marginBottom="4dp"
+        android:visibility="gone" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/edit_txt_email"
+        android:hint="@string/hint_email"
+        android:layout_below="@+id/edit_txt_name"
+        android:layout_alignLeft="@+id/edit_txt_name"
+        android:layout_alignStart="@+id/edit_txt_name"
+        android:layout_marginBottom="4dp"
+        android:visibility="gone" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_txt_feeling"
+        android:hint="@string/edit_txt_feeling"
+        android:maxLength="100"
+        android:maxLines="2"
+        android:minLines="1"
+        android:layout_centerVertical="true"
+        android:layout_alignRight="@+id/check_transport_available"
+        android:layout_alignEnd="@+id/check_transport_available" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/check_transport_available"
+        android:id="@+id/check_transport_available"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/check_street_lights"
+        android:layout_alignStart="@+id/check_street_lights"
+        android:layout_below="@+id/edit_txt_feeling"
+        android:layout_marginTop="4dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/check_street_lights"
+        android:id="@+id/check_street_lights"
+        android:layout_below="@+id/check_transport_available"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/txt_rating"
+        android:layout_above="@+id/ratingBar"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/overall_experience"
+        android:id="@+id/textView"
+        android:layout_above="@+id/txt_rating"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_above="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
+</RelativeLayout>
